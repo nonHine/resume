@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NonHine | Creative Front-end Developer &amp; IT Specialist</title>
+  
+  <!-- Google Fonts: DM Sans, Space Grotesk, Prompt, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..900;1,9..40,300..900&family=JetBrains+Mono:wght@400;500;600&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       RESET & BASE DESIGN TOKENS (Inspired by Andrey Nalivaiko Portfolio)
+       ========================================================================== */
+    :root {
+      --bg-dark: #0a0a0c;
+      --bg-surface: #121216;
+      --bg-surface-elevated: #18181f;
+      --bg-sand: #d6cbc5;
+      --bg-sand-dark: #c4b7b0;
+      --text-sand: #0f0f11;
+      --text-primary: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --text-dim: rgba(255, 255, 255, 0.35);
+      --accent-red: #ff3333;
+      --accent-red-glow: rgba(255, 51, 51, 0.4);
+      --accent-sand: #d6cbc5;
+      --border-hairline: rgba(255, 255, 255, 0.1);
+      --border-sand: rgba(15, 15, 17, 0.15);
+      --font-heading: 'DM Sans', 'Prompt', sans-serif;
+      --font-body: 'DM Sans', 'Prompt', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Space Grotesk', sans-serif;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 32px;
+      --transition-smooth: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-fast: all 0.25s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--accent-red);
+      color: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Subtle background grid pattern */
+    .bg-grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Ambient crimson glow in top-right */
+    .ambient-glow {
+      position: fixed;
+      top: -20vh;
+      right: -10vw;
+      width: 55vw;
+      height: 55vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 34, 0, 0.12) 0%, rgba(255, 34, 0, 0.02) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+      filter: blur(80px);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Crosshair technical marks */
+    .crosshair-corner {
+      position: relative;
+    }
+    .crosshair-corner::before, .crosshair-corner::after {
+      content: '';
+      position: absolute;
+      background: var(--border-hairline);
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       ROTATING CIRCULAR SCROLL BADGE (As specified by user & Andrey Nalivaiko)
+       ========================================================================== */
+    .scroll-indicator {
+      position: fixed;
+      z-index: 90;
+      pointer-events: auto;
+      bottom: 2.25rem;
+      right: 2.25rem;
+      cursor: pointer;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .scroll-indicator:hover {
+      transform: scale(1.08);
+    }
+
+    .cursor-wrapper {
+      position: relative;
+      width: 6.25rem;
+      height: 6.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(10, 10, 12, 0.65);
+      backdrop-filter: blur(12px);
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.15);
+    }
+
+    .cursor-text {
+      animation: rotateText 10s linear infinite;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes rotateText {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .mouse-icon {
+      position: relative;
+      z-index: 2;
+    }
+
+    .mouse-wheel {
+      animation: wheelScroll 1.6s ease-in-out infinite;
+    }
+
+    @keyframes wheelScroll {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(8px); opacity: 0; }
+    }
+
+    /* ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(10, 10, 12, 0.75);
+      border-bottom: 1px solid var(--border-hairline);
+      transition: var(--transition-fast);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 4.5rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav-brand .brand-badge {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-red);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--accent-red);
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    .nav-brand .brand-year {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 2.25rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      position: relative;
+      padding: 0.4rem 0;
+      transition: color 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .nav-link .link-num {
+      color: var(--accent-red);
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 1px;
+      background: var(--text-primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .btn-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--text-primary);
+      color: var(--bg-dark);
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.55rem 1.25rem;
+      border-radius: 9999px;
+      transition: var(--transition-fast);
+      letter-spacing: 0.02em;
+    }
+
+    .btn-contact:hover {
+      background: var(--bg-sand);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-contact svg {
+      transition: transform 0.25s ease;
+    }
+
+    .btn-contact:hover svg {
+      transform: translate(2px, -2px);
+    }
+
+    /* ==========================================================================
+       SECTION: HERO
+       ========================================================================== */
+    .section-hero {
+      padding: 5rem 0 7rem;
+      min-height: calc(100vh - 4.5rem);
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag-track {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-red);
+      font-weight: 600;
+    }
+
+    .eyebrow-line {
+      height: 1px;
+      width: 40px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.75rem;
+      text-transform: uppercase;
+    }
+
+    .hero-title .title-italic {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--bg-sand);
+      font-family: 'DM Sans', serif;
+    }
+
+    .hero-title .title-accent {
+      color: var(--accent-red);
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      max-width: 36rem;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-sand);
+      color: var(--text-sand);
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.9rem 2rem;
+      border-radius: 9999px;
+      transition: var(--transition-fast);
+      letter-spacing: 0.02em;
+      box-shadow: 0 10px 25px rgba(214, 203, 197, 0.15);
+    }
+
+    .btn-primary:hover {
+      background: #ffffff;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-hairline);
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.9rem 1.85rem;
+      border-radius: 9999px;
+      transition: var(--transition-fast);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-3px);
+    }
+
+    /* Hero Portrait Showcase */
+    .hero-portrait-card {
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 0.75rem;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .portrait-image-wrapper {
+      position: relative;
+      border-radius: calc(var(--radius-xl) - 0.4rem);
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+      background: #000;
+    }
+
+    .portrait-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: contrast(1.05) brightness(0.98);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-portrait-card:hover .portrait-image-wrapper img {
+      transform: scale(1.03);
+    }
+
+    .portrait-badge-bottom {
+      position: absolute;
+      bottom: 1.25rem;
+      left: 1.25rem;
+      right: 1.25rem;
+      background: rgba(10, 10, 12, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .portrait-name {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .portrait-role {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-red);
+      letter-spacing: 0.05em;
+    }
+
+    .portrait-kku {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-align: right;
+    }
+
+    /* ==========================================================================
+       SECTION: MANIFESTO & LIVE SVG CLOCK (The Masterpiece Section)
+       ========================================================================== */
+    .section-manifesto {
+      padding: 4rem 0 6rem;
+      position: relative;
+    }
+
+    .manifesto-board {
+      background-color: var(--bg-sand);
+      color: var(--text-sand);
+      border-radius: var(--radius-xl);
+      padding: 5rem 4.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.45);
+    }
+
+    .manifesto-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-sand);
+      padding-bottom: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .manifesto-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(15, 15, 17, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .manifesto-tag-dot {
+      width: 6px;
+      height: 6px;
+      background: #0f0f11;
+      border-radius: 50%;
+    }
+
+    .manifesto-location {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: rgba(15, 15, 17, 0.5);
+      text-transform: uppercase;
+    }
+
+    .manifesto-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 4.5rem;
+      align-items: center;
+    }
+
+    .manifesto-quote-text {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.03em;
+      color: #0f0f11;
+      margin-bottom: 2.5rem;
+    }
+
+    .manifesto-quote-text .accent-quote {
+      font-style: italic;
+      font-weight: 400;
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 6px;
+    }
+
+    .manifesto-signature-row {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .author-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .author-name {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f0f11;
+    }
+
+    .author-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(15, 15, 17, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Live SVG Clock Box */
+    .clock-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(15, 15, 17, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2rem;
+      position: relative;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .svg-clock-wrapper {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    #tick-clock {
+      width: 100%;
+      height: 100%;
+    }
+
+    .clock-tick {
+      stroke: #0f0f11;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      opacity: 0.15;
+      transition: opacity 0.2s ease, stroke-width 0.2s ease;
+      will-change: opacity;
+    }
+
+    .clock-tick.active {
+      opacity: 0.95;
+      stroke-width: 2;
+    }
+
+    .clock-tick.current {
+      opacity: 1;
+      stroke: var(--accent-red);
+      stroke-width: 2.5;
+    }
+
+    .text-clock {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f0f11;
+      letter-spacing: -0.02em;
+    }
+
+    .clock-status-caption {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(15, 15, 17, 0.6);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .clock-status-caption strong {
+      color: #0f0f11;
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       SECTION: BENTO CAPABILITIES (4 Pillars)
+       ========================================================================== */
+    .section-capabilities {
+      padding: 6rem 0;
+      position: relative;
+    }
+
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 3.5rem;
+      border-bottom: 1px solid var(--border-hairline);
+      padding-bottom: 1.5rem;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-red);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+
+    .section-title span {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text-dim);
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .bento-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 380px;
+      position: relative;
+      transition: var(--transition-smooth);
+      overflow: hidden;
+    }
+
+    .bento-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.3s ease;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.25);
+      background: var(--bg-surface-elevated);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .bento-card:hover::before {
+      background: var(--accent-red);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+    }
+
+    .card-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      transition: var(--transition-fast);
+    }
+
+    .bento-card:hover .card-icon {
+      background: var(--accent-red);
+      color: #fff;
+      transform: rotate(6deg) scale(1.05);
+    }
+
+    .card-heading {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      margin-top: auto;
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    /* ==========================================================================
+       SECTION: SELECTED WORK (4 Key Projects from resume_content.md)
+       ========================================================================== */
+    .section-work {
+      padding: 6rem 0;
+      position: relative;
+    }
+
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .project-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-xl);
+      padding: 2.75rem 3rem;
+      position: relative;
+      transition: var(--transition-smooth);
+      display: grid;
+      grid-template-columns: 0.35fr 1.65fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .project-card:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: var(--bg-surface-elevated);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .project-meta-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border-right: 1px solid var(--border-hairline);
+      padding-right: 2rem;
+    }
+
+    .project-index {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 0.9;
+      color: rgba(255, 255, 255, 0.15);
+      transition: color 0.3s ease;
+    }
+
+    .project-card:hover .project-index {
+      color: var(--accent-red);
+    }
+
+    .project-year {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+    }
+
+    .project-badge-type {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--bg-sand);
+      background: rgba(214, 203, 197, 0.1);
+      padding: 0.3rem 0.65rem;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .project-content-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .project-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .project-title {
+      font-family: var(--font-heading);
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .project-role {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-red);
+      font-weight: 500;
+    }
+
+    .project-description {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .project-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .project-tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+    }
+
+    .btn-project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-hairline);
+      transition: var(--transition-fast);
+    }
+
+    .btn-project-link:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    /* ==========================================================================
+       SECTION: ACADEMIC & QUALIFICATIONS (KKU & Languages)
+       ========================================================================== */
+    .section-academic {
+      padding: 5rem 0 6rem;
+      position: relative;
+    }
+
+    .academic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .academic-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: 2.75rem;
+      position: relative;
+    }
+
+    .academic-box h4 {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .academic-box h4 svg {
+      color: var(--accent-red);
+    }
+
+    .edu-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: #fff;
+    }
+
+    .edu-subtitle {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .lang-item {
+      margin-bottom: 1.5rem;
+    }
+
+    .lang-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .lang-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .lang-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 0.4rem;
+    }
+
+    .lang-fill {
+      height: 100%;
+      background: var(--accent-red);
+      border-radius: 9999px;
+    }
+
+    .lang-fill.sand {
+      background: var(--bg-sand);
+    }
+
+    .lang-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    /* ==========================================================================
+       SECTION: FOOTER & CONTACT
+       ========================================================================== */
+    .section-footer {
+      padding: 7rem 0 3rem;
+      border-top: 1px solid var(--border-hairline);
+      position: relative;
+      background: #070709;
+    }
+
+    .footer-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 6rem;
+    }
+
+    .footer-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent-red);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-huge-cta {
+      font-family: var(--font-heading);
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .footer-huge-cta span {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--bg-sand);
+    }
+
+    .footer-channels-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 3.5rem;
+    }
+
+    .channel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      text-align: left;
+      transition: var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .channel-card:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-4px);
+      background: var(--bg-surface-elevated);
+    }
+
+    .channel-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .channel-value {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      color: #fff;
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .footer-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 2.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .footer-qr-group {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .qr-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .qr-preview {
+      width: 48px;
+      height: 48px;
+      background: #fff;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-preview svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .qr-info {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.7rem;
+      line-height: 1.3;
+    }
+
+    .qr-info strong {
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS (Tablet & Mobile Optimization)
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .manifesto-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .footer-channels-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .nav-menu {
+        display: none;
+      }
+      .manifesto-board {
+        padding: 3rem 1.75rem;
+      }
+      .manifesto-quote-text {
+        font-size: 1.6rem;
+      }
+      .project-card {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 2rem 1.5rem;
+      }
+      .project-meta-col {
+        border-right: none;
+        border-bottom: 1px solid var(--border-hairline);
+        padding-right: 0;
+        padding-bottom: 1.25rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .project-index {
+        font-size: 2.5rem;
+      }
+      .academic-grid {
+        grid-template-columns: 1fr;
+      }
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-bottom-bar {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+      }
+      .footer-qr-group {
+        flex-direction: column;
+      }
+      .scroll-indicator {
+        bottom: 1.25rem;
+        right: 1.25rem;
+      }
+      .cursor-wrapper {
+        width: 5rem;
+        height: 5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Grids and Atmospheric Glow -->
+  <div class="bg-grid-overlay"></div>
+  <div class="ambient-glow"></div>
+
+  <!-- ==========================================================================
+       ROTATING CIRCULAR SVG SCROLL BADGE (100% faithful to user prompt & Andrey)
+       ========================================================================== -->
+  <div id="scroll-indicator" class="scroll-indicator" onclick="window.scrollTo({top: window.innerHeight * 0.85, behavior: 'smooth'})" title="Scroll down to explore">
+    <div class="cursor-wrapper">
+      <!-- Circular Rotating Text -->
+      <svg class="cursor-text" width="100" height="100" viewBox="0 0 100 100">
+        <defs>
+          <path id="circlePath" d="M 50, 50 m -40, 0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0"></path>
+        </defs>
+        <text fill="white" font-family="'DM Sans', sans-serif" font-size="9" letter-spacing="3.5" font-weight="bold">
+          <textPath xlink:href="#circlePath">SCROLL DOWN • SCROLL DOWN •</textPath>
+        </text>
+      </svg>
+      
+      <!-- Mouse Scroll Center Icon -->
+      <svg class="mouse-icon" width="20" height="34" viewBox="0 0 24 40" fill="none">
+        <rect x="1" y="1" width="22" height="38" rx="11" stroke="white" stroke-width="2"/>
+        <circle class="mouse-wheel" cx="12" cy="11" r="3" fill="white"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== -->
+  <header class="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#hero" class="nav-brand">
+          <span class="brand-badge"></span>
+          <span>NONHINE</span>
+          <span class="brand-year">/ 2569</span>
+        </a>
+
+        <ul class="nav-menu">
+          <li><a href="#about" class="nav-link"><span class="link-num">01</span> ABOUT</a></li>
+          <li><a href="#capabilities" class="nav-link"><span class="link-num">02</span> CAPABILITIES</a></li>
+          <li><a href="#work" class="nav-link"><span class="link-num">03</span> SELECTED WORK</a></li>
+          <li><a href="#academic" class="nav-link"><span class="link-num">04</span> ACADEMIC</a></li>
+          <li><a href="#contact" class="nav-link"><span class="link-num">05</span> CONTACT</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            <span>MOBILIB GEN 6 CANDIDATE</span>
+          </div>
+          <a href="#contact" class="btn-contact">
+            <span>LET'S TALK</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       HERO SECTION
+       ========================================================================== -->
+  <main>
+    <section id="hero" class="section-hero">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <div class="hero-left-content">
+            <div class="hero-eyebrow">
+              <span class="tag-track">IT &amp; DATA MANAGEMENT</span>
+              <span class="eyebrow-line"></span>
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);">KHON KAEN UNIVERSITY</span>
+            </div>
+
+            <h1 class="hero-title">
+              Creative Front-end <span class="title-italic">Developer</span> &amp; <span class="title-accent">Specialist</span>
+            </h1>
+
+            <p class="hero-desc">
+              นักศึกษาชั้นปีที่ 1 สาขาวิชาสารสนเทศศาสตร์ มหาวิทยาลัยขอนแก่น ผู้มุ่งมั่นผสานความแม่นยำทางเทคนิคเข้ากับความสุนทรีย์ของอินเทอร์เฟซ เชี่ยวชาญการพัฒนาระบบข้อมูล เว็บแอปพลิเคชัน และโซลูชันระบบอัตโนมัติด้วย AI
+            </p>
+
+            <div class="hero-actions">
+              <a href="#work" class="btn-primary">
+                <span>VIEW SELECTED WORK</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+              <a href="resume-3d.html" class="btn-secondary" title="Switch to 3D Particle Showcase">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <span>3D PARTICLE MODE</span>
+              </a>
+              <a href="index.html" class="btn-secondary" title="View Printable A4 Resume">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                <span>PRINTABLE RESUME (A4)</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Hero Portrait Card -->
+          <div class="hero-right-portrait">
+            <div class="hero-portrait-card">
+              <div class="portrait-image-wrapper">
+                <img src="assets/portrait-new.jpg" alt="NonHine - NonHine" loading="eager" />
+              </div>
+
+              <div class="portrait-badge-bottom">
+                <div class="author-details">
+                  <div class="portrait-name">NonHine</div>
+                  <div class="portrait-role">IT &amp; DATA MANAGEMENT</div>
+                </div>
+                <div class="portrait-kku">
+                  <div>HUSO · KKU</div>
+                  <div style="color: #10b981;">● AVAILABLE</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 01: THE MANIFESTO & LIVE SVG CLOCK
+         ========================================================================== -->
+    <section id="about" class="section-manifesto">
+      <div class="container">
+        <div class="manifesto-board">
+          
+          <div class="manifesto-header">
+            <div class="manifesto-tag">
+              <span class="manifesto-tag-dot"></span>
+              <span>01 / PHILOSOPHY &amp; MANIFESTO</span>
+            </div>
+            <div class="manifesto-location">
+              <span>KHON KAEN · THAILAND (GMT+7)</span>
+            </div>
+          </div>
+
+          <div class="manifesto-grid">
+            
+            <div class="manifesto-text-column">
+              <blockquote class="manifesto-quote-text">
+                “I believe that <span class="accent-quote">digital interfaces are a form of art</span>. My goal is to harmonize technical precision with visual emotion, using code as a medium to create immersive, breathing experiences. For me, development is not just about functionality — it is the pursuit of aesthetic perfection.”
+              </blockquote>
+
+              <div class="manifesto-signature-row">
+                <div class="author-info">
+                  <span class="author-name">NonHine (NonHine)</span>
+                  <span class="author-title">IT &amp; DATA SOLUTION PROVIDER · KKU PORTFOLIO RECRUIT</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- LIVE SVG CLOCK (60 Radial Ticks with Real-time Clock) -->
+            <div class="clock-container">
+              <div class="svg-clock-wrapper">
+                <svg id="tick-clock" width="140" height="140" viewBox="0 0 120 120">
+                  <g id="ticks-group" transform="translate(60, 60) rotate(-90)">
+                    <!-- Dynamically generated 60 SVG lines via JS -->
+                  </g>
+                </svg>
+                <div id="clock-digits" class="text-clock">--:--</div>
+              </div>
+
+              <div class="clock-status-caption">
+                <strong>REAL-TIME BANGKOK TIME</strong>
+                <span>60-TICK PRECISION CLOCK</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 02: BENTO CAPABILITIES (4 Pillars)
+         ========================================================================== -->
+    <section id="capabilities" class="section-capabilities">
+      <div class="container">
+        
+        <div class="section-header-row">
+          <div>
+            <div class="section-eyebrow">02 / CORE CAPABILITIES</div>
+            <h2 class="section-title">Technical <span>Excellence</span></h2>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);">
+            [ FOUR PILLARS OF PERFORMANCE ]
+          </div>
+        </div>
+
+        <div class="bento-grid">
+          
+          <!-- Pillar 1: Layout -->
+          <div class="bento-card">
+            <div class="card-top">
+              <span class="card-num">01 / LAYOUT</span>
+              <div class="card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                  <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h3 class="card-heading">Layout &amp; Frontend</h3>
+              <p class="card-desc">
+                โครงสร้างเว็บระดับ Semantic HTML5, Next.js, TypeScript และ Tailwind CSS ที่รองรับ Fluid Responsive ข้ามทุกขนาดหน้าจออย่างแม่นยำระดับพิกเซล
+              </p>
+            </div>
+            <ul class="card-tags">
+              <li class="card-tag">Next.js</li>
+              <li class="card-tag">TypeScript</li>
+              <li class="card-tag">Figma-to-Code</li>
+              <li class="card-tag">Clean Architecture</li>
+            </ul>
+          </div>
+
+          <!-- Pillar 2: Motion & 3D -->
+          <div class="bento-card">
+            <div class="card-top">
+              <span class="card-num">02 / MOTION</span>
+              <div class="card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h3 class="card-heading">Motion &amp; 3D WebGL</h3>
+              <p class="card-desc">
+                Three.js Particle Physics, SVG Path Morphing, Web Audio API Sound FX และ Micro-interactions ที่มอบความลื่นไหลและมีชีวิตชีวา
+              </p>
+            </div>
+            <ul class="card-tags">
+              <li class="card-tag">Three.js</li>
+              <li class="card-tag">GSAP Scroll</li>
+              <li class="card-tag">SVG Animations</li>
+              <li class="card-tag">Web Audio API</li>
+            </ul>
+          </div>
+
+          <!-- Pillar 3: Data Management -->
+          <div class="bento-card">
+            <div class="card-top">
+              <span class="card-num">03 / DATA</span>
+              <div class="card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h3 class="card-heading">Data &amp; Analytics</h3>
+              <p class="card-desc">
+                ออกแบบฐานข้อมูล SQL/Supabase, จัดการ Data Cleaning สเกลใหญ่, และสร้าง Interactive BI Dashboard ด้วย Looker Studio และ Power BI
+              </p>
+            </div>
+            <ul class="card-tags">
+              <li class="card-tag">PostgreSQL</li>
+              <li class="card-tag">Supabase</li>
+              <li class="card-tag">Google Sheets</li>
+              <li class="card-tag">Power BI / Looker</li>
+            </ul>
+          </div>
+
+          <!-- Pillar 4: Automation -->
+          <div class="bento-card">
+            <div class="card-top">
+              <span class="card-num">04 / AUTOMATION</span>
+              <div class="card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h3 class="card-heading">AI &amp; Automation</h3>
+              <p class="card-desc">
+                เขียนสคริปต์อัตโนมัติด้วย Python, เชื่อมต่อ Generative AI Prompting สรุปเอกสาร, และระบบสแกนสลิปโอนเงินอัจฉริยะที่ลดภาระงานคน 100%
+              </p>
+            </div>
+            <ul class="card-tags">
+              <li class="card-tag">Python Scripting</li>
+              <li class="card-tag">Generative AI</li>
+              <li class="card-tag">Prompt Engineering</li>
+              <li class="card-tag">Slip OCR AI</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 03: SELECTED WORK (4 Key Projects from resume_content.md)
+         ========================================================================== -->
+    <section id="work" class="section-work">
+      <div class="container">
+        
+        <div class="section-header-row">
+          <div>
+            <div class="section-eyebrow">03 / PORTFOLIO HIGHLIGHTS</div>
+            <h2 class="section-title">Selected <span>Projects</span></h2>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);">
+            [ PROVEN TRACK RECORD · 2569 ]
+          </div>
+        </div>
+
+        <div class="projects-list">
+          
+          <!-- Project 1: Larb Raek Phob Tickets -->
+          <article class="project-card">
+            <div class="project-meta-col">
+              <div class="project-index">01</div>
+              <div class="project-year">YEAR 2569</div>
+              <span class="project-badge-type">FULL-STACK &amp; AI</span>
+            </div>
+
+            <div class="project-content-col">
+              <div class="project-title-row">
+                <h3 class="project-title">Larb Raek Phob Tickets</h3>
+                <span class="project-role">Lead Full-Stack &amp; AI System Developer</span>
+              </div>
+
+              <p class="project-description">
+                ร่วมมือกับกลุ่มนักศึกษา KKBS ในการพัฒนาระบบจำหน่ายตั๋วและตรวจสอบสลิปโอนเงินอัตโนมัติด้วย AI สำหรับกิจกรรมนักศึกษา มข. ด้วย Next.js, TypeScript และฐานข้อมูล Supabase (PostgreSQL) พร้อมระบบสร้าง PromptPay QR Code และสแกนตั๋วเข้างานแบบ Real-time ลดภาระงานตรวจสอบด้วยมือได้ 100%
+              </p>
+
+              <div class="project-footer-row">
+                <div class="project-tech-stack">
+                  <span class="tech-pill">Next.js</span>
+                  <span class="tech-pill">TypeScript</span>
+                  <span class="tech-pill">Supabase</span>
+                  <span class="tech-pill">PostgreSQL</span>
+                  <span class="tech-pill">PromptPay QR</span>
+                  <span class="tech-pill">AI Slip Verification</span>
+                </div>
+
+                <a href="https://github.com/nonHine/larb-raek-phob-tickets" target="_blank" class="btn-project-link">
+                  <span>GITHUB REPO</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 2: ROADMAP.STUDIO -->
+          <article class="project-card">
+            <div class="project-meta-col">
+              <div class="project-index">02</div>
+              <div class="project-year">YEAR 2569</div>
+              <span class="project-badge-type">EDTECH &amp; OFFLINE</span>
+            </div>
+
+            <div class="project-content-col">
+              <div class="project-title-row">
+                <h3 class="project-title">ROADMAP.STUDIO (CEFR B2 Hub)</h3>
+                <span class="project-role">Interactive Learning Web Developer</span>
+              </div>
+
+              <p class="project-description">
+                สร้างเว็บแอปพลิเคชันจำลองการสอบและศูนย์การเรียนรู้ภาษาอังกฤษแบบโต้ตอบ 100 ข้อ รองรับการทำงานแบบ Offline-Ready 100% พร้อมระบบตรวจคำตอบทันทีและเสียงสังเคราะห์ Web Audio API สามารถต่อยอดเป็นสื่อนวัตกรรมการเรียนรู้ดิจิทัลสำหรับลงพื้นที่ห้องสมุดเคลื่อนที่ MobiLib ได้ทันที
+              </p>
+
+              <div class="project-footer-row">
+                <div class="project-tech-stack">
+                  <span class="tech-pill">JavaScript ES6+</span>
+                  <span class="tech-pill">Offline-Ready PWA</span>
+                  <span class="tech-pill">Web Audio API</span>
+                  <span class="tech-pill">CEFR B2 Evaluation</span>
+                  <span class="tech-pill">100 Dynamic Exams</span>
+                </div>
+
+                <a href="https://github.com/nonHine" target="_blank" class="btn-project-link">
+                  <span>VIEW REPO</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 3: KKU Data Analytics -->
+          <article class="project-card">
+            <div class="project-meta-col">
+              <div class="project-index">03</div>
+              <div class="project-year">YEAR 2569</div>
+              <span class="project-badge-type">BI &amp; DATA CLEANSING</span>
+            </div>
+
+            <div class="project-content-col">
+              <div class="project-title-row">
+                <h3 class="project-title">KKU Data Analytics &amp; Dashboard</h3>
+                <span class="project-role">Data Management &amp; BI Analyst</span>
+              </div>
+
+              <p class="project-description">
+                ออกแบบโครงสร้างฐานข้อมูล ทำความสะอาดข้อมูล (Data Cleaning) และพัฒนาแดชบอร์ดวิเคราะห์สถิติตัวชี้วัด (KPIs) ด้วย Google Sheets, Looker Studio และ Power BI เพื่อสรุปผลการดำเนินงานและรายงานผลกระทบโครงการอย่างแม่นยำ พร้อมส่งออกข้อมูลเป็นกราฟิกสรุปผลอัตโนมัติ
+              </p>
+
+              <div class="project-footer-row">
+                <div class="project-tech-stack">
+                  <span class="tech-pill">Google Sheets</span>
+                  <span class="tech-pill">Looker Studio</span>
+                  <span class="tech-pill">Power BI</span>
+                  <span class="tech-pill">Data Modeling</span>
+                  <span class="tech-pill">KPI Monitoring</span>
+                </div>
+
+                <a href="https://github.com/nonHine" target="_blank" class="btn-project-link">
+                  <span>DASHBOARD METRICS</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 4: AI Workflow Automation -->
+          <article class="project-card">
+            <div class="project-meta-col">
+              <div class="project-index">04</div>
+              <div class="project-year">YEAR 2569</div>
+              <span class="project-badge-type">AI PIPELINE</span>
+            </div>
+
+            <div class="project-content-col">
+              <div class="project-title-row">
+                <h3 class="project-title">AI - Workflow Automation</h3>
+                <span class="project-role">Python &amp; Generative AI Engineer</span>
+              </div>
+
+              <p class="project-description">
+                พัฒนาสคริปต์อัตโนมัติด้วย Python และประยุกต์ใช้ Generative AI (Prompt Engineering) เพื่อสรุปข้อมูลแบบสอบถามขนาดใหญ่ ผลิตสื่อเอกสารสรุปผล และประสานงานข้อมูลระหว่าง Cloud Storage ได้อย่างรวดเร็ว ประหยัดเวลาทำงานของทีมได้มากกว่า 80%
+              </p>
+
+              <div class="project-footer-row">
+                <div class="project-tech-stack">
+                  <span class="tech-pill">Python 3</span>
+                  <span class="tech-pill">Generative AI</span>
+                  <span class="tech-pill">Prompt Engineering</span>
+                  <span class="tech-pill">Data Pipelines</span>
+                  <span class="tech-pill">Automated Reports</span>
+                </div>
+
+                <a href="https://github.com/nonHine" target="_blank" class="btn-project-link">
+                  <span>WORKFLOW SPEC</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 04: ACADEMIC CREDENTIALS & LANGUAGE PROFICIENCY
+         ========================================================================== -->
+    <section id="academic" class="section-academic">
+      <div class="container">
+        
+        <div class="academic-grid">
+          
+          <!-- Education Card -->
+          <div class="academic-box">
+            <h4>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+              </svg>
+              <span>การศึกษา (EDUCATION)</span>
+            </h4>
+
+            <div style="border-left: 2px solid var(--accent-red); padding-left: 1.25rem; margin-top: 1rem;">
+              <div class="edu-title">ปริญญาตรี คณะมนุษยศาสตร์และสังคมศาสตร์</div>
+              <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-red); margin-bottom: 0.5rem;">
+                สาขาวิชาสารสนเทศศาสตร์ (Information Science)
+              </div>
+              <div class="edu-subtitle">
+                มหาวิทยาลัยขอนแก่น (Khon Kaen University)<br>
+                เข้าศึกษาผ่านรอบ Portfolio | นักศึกษาชั้นปีที่ 1 ปีการศึกษา 2569
+              </div>
+            </div>
+          </div>
+
+          <!-- Language Proficiency Card -->
+          <div class="academic-box">
+            <h4>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <span>ระดับภาษา (LANGUAGES)</span>
+            </h4>
+
+            <!-- English -->
+            <div class="lang-item">
+              <div class="lang-header">
+                <strong>ENGLISH (CEFR B2 / Technical)</strong>
+                <span style="color: var(--accent-red);">80% [■ ■ ■ ■ □]</span>
+              </div>
+              <div class="lang-bar">
+                <div class="lang-fill" style="width: 80%;"></div>
+              </div>
+              <div class="lang-desc">ฟัง, พูด, อ่าน, เขียน คล่องแคล่วสำหรับงาน Technical &amp; Data Documentation</div>
+            </div>
+
+            <!-- Thai -->
+            <div class="lang-item">
+              <div class="lang-header">
+                <strong>THAI (Native)</strong>
+                <span style="color: var(--bg-sand);">100% [■ ■ ■ ■ ■]</span>
+              </div>
+              <div class="lang-bar">
+                <div class="lang-fill sand" style="width: 100%;"></div>
+              </div>
+              <div class="lang-desc">ภาษาแม่ การสื่อสาร การประสานงานโครงการ และการสรุปรายงานระดับผู้บริหาร</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 05: FOOTER & CONTACT
+         ========================================================================== -->
+    <footer id="contact" class="section-footer">
+      <div class="container">
+        
+        <div class="footer-top">
+          <div class="footer-eyebrow">05 / GET IN TOUCH</div>
+          <h2 class="footer-huge-cta">
+            Let’s Work <span>Together</span>
+          </h2>
+
+          <div class="footer-channels-grid">
+            
+            <a href="mailto:developer.portfolio@example.com" class="channel-card">
+              <div class="channel-label">EMAIL ADDRESS</div>
+              <div class="channel-value">developer.portfolio@example.com</div>
+              <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-red);">SEND INQUIRY ↗</div>
+            </a>
+
+            <a href="tel:08XXXXXXXX" class="channel-card">
+              <div class="channel-label">DIRECT PHONE</div>
+              <div class="channel-value">08X-XXX-XXXX</div>
+              <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--bg-sand);">CALL NOW ↗</div>
+            </a>
+
+            <a href="https://github.com/nonHine" target="_blank" class="channel-card">
+              <div class="channel-label">GITHUB &amp; CODE</div>
+              <div class="channel-value">github.com/nonHine</div>
+              <div style="font-family: var(--font-mono); font-size: 0.72rem; color: #fff;">EXPLORE REPOS ↗</div>
+            </a>
+
+          </div>
+
+          <!-- Quick Return to Top Button -->
+          <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="btn-primary" style="cursor: pointer; border: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="19" x2="12" y2="5"></line>
+              <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+            <span>BACK TO TOP</span>
+          </button>
+        </div>
+
+        <div class="footer-bottom-bar">
+          <div>
+            <div>© 2569 NONHINE (CREATIVE DEVELOPER). ALL RIGHTS RESERVED.</div>
+            <div style="margin-top: 0.25rem;">FACULTY OF HUMANITIES &amp; SOCIAL SCIENCES · KHON KAEN UNIVERSITY</div>
+          </div>
+
+          <div class="footer-qr-group">
+            <div class="qr-badge">
+              <div class="qr-preview">
+                <!-- SVG QR Placeholder -->
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 4h4v4h-4v-4zm-4 2h2v2h-2v-2z"/>
+                </svg>
+              </div>
+              <div class="qr-info">
+                <strong>PROJECT ที่เคยทำ</strong>
+                <span>Larb Raek Phob Tickets</span>
+              </div>
+            </div>
+
+            <div class="qr-badge">
+              <div class="qr-preview">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm12 0h2v2h-2v-2zm2 2h2v2h-2v-2zm-4 2h2v2h-2v-2zm4 2h2v2h-2v-2z"/>
+                </svg>
+              </div>
+              <div class="qr-info">
+                <strong>GITHUB &amp; PORTFOLIO</strong>
+                <span>github.com/nonHine</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  </main>
+
+  <!-- ==========================================================================
+       REAL-TIME SVG TICK CLOCK JAVASCRIPT ENGINE
+       (Exact 60 radial ticks as in Andrey Nalivaiko's site)
+       ========================================================================== -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const ticksGroup = document.getElementById("ticks-group");
+      const digitsElement = document.getElementById("clock-digits");
+      const scrollIndicator = document.getElementById("scroll-indicator");
+
+      if (ticksGroup) {
+        // 1. Generate 60 radial tick marks
+        const fragment = document.createDocumentFragment();
+        for (let i = 0; i < 60; i++) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", "44");
+          line.setAttribute("y1", "0");
+          line.setAttribute("x2", "54");
+          line.setAttribute("y2", "0");
+          line.setAttribute("transform", `rotate(${i * 6})`);
+          line.classList.add("clock-tick");
+          fragment.appendChild(line);
+        }
+        ticksGroup.appendChild(fragment);
+
+        const ticks = ticksGroup.children;
+        let lastSecond = -1;
+
+        // 2. High-performance requestAnimationFrame clock update
+        function updateClock() {
+          const now = new Date();
+          const seconds = now.getSeconds();
+
+          if (seconds !== lastSecond) {
+            lastSecond = seconds;
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            if (digitsElement) {
+              digitsElement.textContent = `${hours}:${minutes}`;
+            }
+
+            // Update tick active states
+            for (let i = 0; i < 60; i++) {
+              if (i === seconds) {
+                ticks[i].classList.add("active");
+                ticks[i].classList.add("current");
+              } else if (i < seconds) {
+                ticks[i].classList.add("active");
+                ticks[i].classList.remove("current");
+              } else {
+                ticks[i].classList.remove("active");
+                ticks[i].classList.remove("current");
+              }
+            }
+          }
+
+          requestAnimationFrame(updateClock);
+        }
+
+        requestAnimationFrame(updateClock);
+      }
+
+      // Hide scroll indicator once user has scrolled past hero
+      window.addEventListener("scroll", () => {
+        if (!scrollIndicator) return;
+        if (window.scrollY > window.innerHeight * 0.75) {
+          scrollIndicator.style.opacity = "0.2";
+          scrollIndicator.style.pointerEvents = "none";
+        } else {
+          scrollIndicator.style.opacity = "1";
+          scrollIndicator.style.pointerEvents = "auto";
+        }
+      }, { passive: true });
+    });
+  </script>
+</body>
+</html>

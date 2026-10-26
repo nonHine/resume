@@ -1,0 +1,15 @@
+# Node & Logs
+node_modules/
+*.log
+npm-debug.log*
+
+# Test scripts & temp files
+*test*.mjs
+*test*.js
+verify_*.mjs
+update_*.mjs
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini

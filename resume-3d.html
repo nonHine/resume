@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NONHINE (ฮาย) — HINE Interactive 3D Particles | Three.js Showcase</title>
+  <meta name="description" content="Interactive 3D particle typography showcase for HINE with Three.js, luminous white core, and crimson shockwave explosion physics." />
+
+  <!-- Google Fonts: Space Grotesk & Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Three.js r125 (Local first, CDN fallback) -->
+  <script src="assets/three.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js';"></script>
+
+  <!-- Vertex Shader -->
+  <script type="x-shader/x-vertex" id="vertexshader">
+    attribute float size;
+    attribute vec3 customColor;
+    varying vec3 vColor;
+    void main() {
+      vColor = customColor;
+      vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+      gl_PointSize = size * ( 300.0 / -mvPosition.z );
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  </script>
+
+  <!-- Fragment Shader -->
+  <script type="x-shader/x-fragment" id="fragmentshader">
+    uniform vec3 color;
+    uniform sampler2D pointTexture;
+    varying vec3 vColor;
+    void main() {
+      gl_FragColor = vec4( color * vColor, 1.0 );
+      gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg: #08080a;
+      --accent: #ff2200;
+      --accent-glow: rgba(255, 34, 0, 0.35);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.6);
+      --line: rgba(255, 255, 255, 0.12);
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "Prompt", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      touch-action: none;
+    }
+
+    /* Background Ambient Crimson Glow behind 3D Canvas */
+    .crimson-ambient-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80vw;
+      height: 60vh;
+      background: radial-gradient(
+        ellipse at 50% 50%,
+        rgba(255, 34, 0, 0.36) 0%,
+        rgba(255, 60, 20, 0.14) 40%,
+        rgba(8, 8, 10, 0) 74%
+      );
+      pointer-events: none;
+      filter: blur(55px);
+      z-index: 1;
+      animation: ambientPulse 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes ambientPulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0.96);
+        opacity: 0.85;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.08);
+        opacity: 1;
+      }
+    }
+
+    /* Three.js Canvas Container */
+    #magic {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      cursor: crosshair;
+    }
+
+    #magic canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Fixed UI Header */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .brand-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.875rem;
+      pointer-events: auto;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-monogram {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--line);
+      font-family: var(--font-display);
+      font-size: 0.9375rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .brand-group:hover .brand-monogram {
+      border-color: var(--accent);
+      background: rgba(255, 34, 0, 0.12);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 0.9375rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-left: 0.35rem;
+    }
+
+    .nav-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      pointer-events: auto;
+    }
+
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 9999px;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .pill-btn:hover {
+      border-color: var(--accent);
+      background: rgba(255, 34, 0, 0.15);
+      color: #ffffff;
+      box-shadow: 0 0 25px rgba(255, 34, 0, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Fixed UI Bottom Cue */
+    .interaction-cue-bar {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 0.6rem 1.4rem;
+      border-radius: 9999px;
+      background: rgba(8, 8, 10, 0.75);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .pulse-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 9999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: dotBlink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes dotBlink {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .cue-text {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .cue-accent {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      .site-header {
+        padding: 1.25rem;
+      }
+      .brand-subtitle {
+        display: none;
+      }
+      .interaction-cue-bar {
+        bottom: 1.25rem;
+        width: 90%;
+        justify-content: center;
+      }
+      .cue-text {
+        font-size: 0.6875rem;
+        letter-spacing: 0.08em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Crimson Glow Layer -->
+  <div class="crimson-ambient-glow" aria-hidden="true"></div>
+
+  <!-- Three.js Canvas Container -->
+  <div id="magic" aria-label="HINE 3D Interactive Particle Typography"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <a href="#" class="brand-group" aria-label="NonHine Home">
+      <span class="brand-monogram">NH</span>
+      <div>
+        <span class="brand-title">NONHINE</span>
+        <span class="brand-subtitle">// IT &amp; DATA MANAGEMENT</span>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      <a href="index.html" class="pill-btn" target="_blank" rel="noopener noreferrer">
+        <span>A4 Print Resume</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M7 17L17 7M17 7H7M17 7V17" />
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Interaction Cue -->
+  <div class="interaction-cue-bar" aria-live="polite">
+    <span class="pulse-dot"></span>
+    <span class="cue-text">HOVER TO DISPERSE · <span class="cue-accent">CLICK &amp; HOLD</span> FOR CRIMSON SHOCKWAVE</span>
+  </div>
+
+  <script>
+    /* =====================================================
+       1. EMBEDDED GLYPH SUBSET FOR "HINE" (100% Offline)
+       ===================================================== */
+    const INLINE_HINE_FONT_DATA = {
+      familyName: "HINE-Font",
+      ascender: 1319,
+      descender: -347,
+      underlinePosition: -312,
+      underlineThickness: 69,
+      boundingBox: { yMin: -324, xMin: -201, yMax: 1310, xMax: 1540 },
+      resolution: 1000,
+      cssFontWeight: "normal",
+      cssFontStyle: "normal",
+      glyphs: {
+        "H": {
+          ha: 1019,
+          x_min: 139,
+          x_max: 881,
+          o: "m 139 0 l 139 972 l 251 972 l 251 546 l 768 546 l 768 972 l 881 972 l 881 0 l 768 0 l 768 443 l 251 443 l 251 0 l 139 0 z "
+        },
+        "I": {
+          ha: 651,
+          x_min: 125,
+          x_max: 526,
+          o: "m 125 0 l 125 97 l 269 97 l 269 875 l 125 875 l 125 972 l 526 972 l 526 875 l 382 875 l 382 97 l 526 97 l 526 0 l 125 0 z "
+        },
+        "N": {
+          ha: 1021,
+          x_min: 139,
+          x_max: 882,
+          o: "m 139 0 l 139 972 l 324 972 l 763 103 l 771 103 l 771 972 l 882 972 l 882 0 l 693 0 l 260 869 l 251 869 l 251 0 l 139 0 z "
+        },
+        "E": {
+          ha: 778,
+          x_min: 139,
+          x_max: 708,
+          o: "m 139 0 l 139 972 l 693 972 l 693 869 l 251 869 l 251 546 l 632 546 l 632 444 l 251 444 l 251 101 l 708 101 l 708 0 l 139 0 z "
+        },
+        " ": {
+          ha: 389,
+          x_min: 0,
+          x_max: 0,
+          o: ""
+        }
+      }
+    };
+
+    /* =====================================================
+       2. PROCEDURAL RADIAL PARTICLE SPRITE (100% Offline)
+       ===================================================== */
+    function createProceduralParticleTexture() {
+      const c = document.createElement("canvas");
+      c.width = 64;
+      c.height = 64;
+      const ctx = c.getContext("2d");
+      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, "rgba(255,255,255,1)");
+      g.addColorStop(0.3, "rgba(255,255,255,0.9)");
+      g.addColorStop(0.65, "rgba(255,255,255,0.3)");
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    }
+
+    /* =====================================================
+       3. THREE.JS PARTICLE TYPOGRAPHY CLASS
+       ===================================================== */
+    class CreateParticles {
+      constructor(scene, font, particleImg, camera, renderer) {
+        this.scene = scene;
+        this.font = font;
+        this.particleImg = particleImg;
+        this.camera = camera;
+        this.renderer = renderer;
+
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2(-200, 200);
+        this.colorChange = new THREE.Color();
+        this.buttom = false; // Hold state
+        window.debugParticles = this;
+
+        const visW = this.visibleWidthAtZDepth(0, this.camera);
+        // Responsive font size
+        const computedTextSize = Math.min(48, Math.max(22, Math.floor(visW * 0.22)));
+
+        this.data = {
+          text: "HINE",
+          textColor: 0xffffff,
+          particleSize: 1.15,
+          textSize: computedTextSize,
+          area: 250, // Base hover radius
+          ease: 0.05,
+        };
+
+        this.setup();
+        this.bindEvents();
+      }
+
+      setup() {
+        const geometry = new THREE.PlaneGeometry(
+          this.visibleWidthAtZDepth(0, this.camera),
+          this.visibleHeightAtZDepth(0, this.camera)
+        );
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0, depthWrite: false });
+        this.planeArea = new THREE.Mesh(geometry, material);
+        this.planeArea.visible = true;
+        this.scene.add(this.planeArea);
+
+        this.createText();
+      }
+
+      bindEvents() {
+        const onDown = (e) => {
+          if (e.target && e.target.closest && e.target.closest("button, a")) return;
+          this.onMouseDown(e);
+        };
+        const onMove = (e) => {
+          this.onMouseMove(e);
+        };
+        const onUp = () => this.onMouseUp();
+
+        window.addEventListener("pointerdown", onDown);
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+
+        window.addEventListener("mousedown", onDown);
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", onUp);
+
+        window.addEventListener("touchstart", (e) => {
+          if (e.touches && e.touches.length > 0) onDown(e.touches[0]);
+        }, { passive: true });
+        window.addEventListener("touchmove", (e) => {
+          if (e.touches && e.touches.length > 0) onMove(e.touches[0]);
+        }, { passive: true });
+        window.addEventListener("touchend", onUp);
+        window.addEventListener("mouseleave", onUp);
+      }
+
+      onWindowResize() {
+        if (this.planeArea && this.planeArea.geometry) {
+          this.planeArea.geometry.dispose();
+          this.planeArea.geometry = new THREE.PlaneGeometry(
+            this.visibleWidthAtZDepth(0, this.camera),
+            this.visibleHeightAtZDepth(0, this.camera)
+          );
+        }
+      }
+
+      onMouseDown(event) {
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        // Activate Shockwave Explosion: Expand blast area and lower ease for dramatic outward launch
+        this.buttom = true;
+        this.data.area = 650; // Expanded explosion radius
+        this.data.ease = 0.012; // High outward velocity
+      }
+
+      onMouseUp() {
+        // Return to normal hover state
+        this.buttom = false;
+        this.data.area = 250;
+        this.data.ease = 0.055; // Snap back quickly into position
+      }
+
+      onMouseMove(event) {
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      }
+
+      render() {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObject(this.planeArea);
+
+        if (intersects.length > 0) {
+          const pos = this.particles.geometry.attributes.position;
+          const copy = this.geometryCopy.attributes.position;
+          const colors = this.particles.geometry.attributes.customColor;
+          const size = this.particles.geometry.attributes.size;
+
+          const mx = intersects[0].point.x;
+          const my = intersects[0].point.y;
+          const mz = intersects[0].point.z;
+
+          for (let i = 0, l = pos.count; i < l; i++) {
+            const initX = copy.getX(i);
+            const initY = copy.getY(i);
+            const initZ = copy.getZ(i);
+
+            let px = pos.getX(i);
+            let py = pos.getY(i);
+            let pz = pos.getZ(i);
+
+            // Default: Crisp Luminous White
+            this.colorChange.setHSL(0.5, 1.0, 1.0);
+            colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+
+            size.array[i] = this.data.particleSize;
+
+            let dx = mx - px;
+            let dy = my - py;
+            let d = (dx = mx - px) * dx + (dy = my - py) * dy;
+            const mouseDistance = this.distance(mx, my, px, py);
+            const f = -this.data.area / d;
+
+            if (this.buttom) {
+              // CLICK-HOLD: Shockwave Outward Burst
+              const t = Math.atan2(dy, dx);
+              px -= f * Math.cos(t);
+              py -= f * Math.sin(t);
+
+              const distFromHome = Math.hypot(px - initX, py - initY);
+              if (distFromHome > 10) {
+                // Outer exploding sparks: Luminous Fiery Red (#ff2200 / HSL 0.022, 1.0, 0.56)
+                this.colorChange.setHSL(0.022, 1.0, 0.56);
+                size.array[i] = this.data.particleSize * 1.35;
+              } else {
+                // Core letter body remains intense crisp white
+                this.colorChange.setHSL(0.5, 1.0, 1.0);
+                size.array[i] = this.data.particleSize * 1.05;
+              }
+              colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+            } else {
+              // HOVER: Fluid Particle Dispersal
+              if (mouseDistance < this.data.area) {
+                const t = Math.atan2(dy, dx);
+                px += f * Math.cos(t);
+                py += f * Math.sin(t);
+
+                const distFromHome = Math.hypot(px - initX, py - initY);
+                if (distFromHome > 7) {
+                  // Dispersed particles ignite into crimson accent
+                  this.colorChange.setHSL(0.022, 1.0, 0.56);
+                  size.array[i] = this.data.particleSize * 1.25;
+                } else {
+                  this.colorChange.setHSL(0.5, 1.0, 1.0);
+                  size.array[i] = this.data.particleSize * 1.1;
+                }
+                colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+              }
+            }
+
+            // Spring return to home position
+            px += (initX - px) * this.data.ease;
+            py += (initY - py) * this.data.ease;
+            pz += (initZ - pz) * this.data.ease;
+
+            pos.setXYZ(i, px, py, pz);
+          }
+
+          pos.needsUpdate = true;
+          colors.needsUpdate = true;
+          size.needsUpdate = true;
+        }
+      }
+
+      createText() {
+        let thePoints = [];
+        let shapes = this.font.generateShapes(this.data.text, this.data.textSize);
+        let geometry = new THREE.ShapeGeometry(shapes);
+        geometry.computeBoundingBox();
+
+        const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+        const yMid = -0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
+        geometry.center();
+
+        const posAttr = geometry.attributes.position;
+        const indexAttr = geometry.index;
+        const triCount = indexAttr ? indexAttr.count / 3 : posAttr.count / 3;
+
+        let areas = [];
+        let totalArea = 0;
+        for (let t = 0; t < triCount; t++) {
+          const i0 = indexAttr ? indexAttr.getX(t * 3) : t * 3;
+          const i1 = indexAttr ? indexAttr.getX(t * 3 + 1) : t * 3 + 1;
+          const i2 = indexAttr ? indexAttr.getX(t * 3 + 2) : t * 3 + 2;
+
+          const ax = posAttr.getX(i0), ay = posAttr.getY(i0);
+          const bx = posAttr.getX(i1), by = posAttr.getY(i1);
+          const cx = posAttr.getX(i2), cy = posAttr.getY(i2);
+
+          const area = 0.5 * Math.abs((bx - ax) * (cy - ay) - (by - ay) * (cx - ax));
+          areas.push(area);
+          totalArea += area;
+        }
+
+        let colors = [];
+        let sizes = [];
+
+        // 1. Uniform Dense Interior Infill (~5,500 particles for rich solid fill)
+        const TARGET_INTERIOR_POINTS = 5500;
+        for (let t = 0; t < triCount; t++) {
+          const i0 = indexAttr ? indexAttr.getX(t * 3) : t * 3;
+          const i1 = indexAttr ? indexAttr.getX(t * 3 + 1) : t * 3 + 1;
+          const i2 = indexAttr ? indexAttr.getX(t * 3 + 2) : t * 3 + 2;
+
+          const ax = posAttr.getX(i0), ay = posAttr.getY(i0);
+          const bx = posAttr.getX(i1), by = posAttr.getY(i1);
+          const cx = posAttr.getX(i2), cy = posAttr.getY(i2);
+
+          const numPoints = Math.max(1, Math.round((areas[t] / totalArea) * TARGET_INTERIOR_POINTS));
+          for (let k = 0; k < numPoints; k++) {
+            let r1 = Math.random();
+            let r2 = Math.random();
+            if (r1 + r2 > 1) {
+              r1 = 1 - r1;
+              r2 = 1 - r2;
+            }
+            const px = ax + r1 * (bx - ax) + r2 * (cx - ax);
+            const py = ay + r1 * (by - ay) + r2 * (cy - ay);
+
+            thePoints.push(new THREE.Vector3(px, py, 0));
+            colors.push(1.0, 1.0, 1.0);
+            sizes.push(this.data.particleSize * (0.85 + Math.random() * 0.35));
+          }
+        }
+
+        // 2. High-precision Outer Contour Boundary (~1,500 boundary particles)
+        shapes.forEach((shape) => {
+          const edgePts = shape.getSpacedPoints(250);
+          edgePts.forEach((pt) => {
+            thePoints.push(new THREE.Vector3(pt.x + xMid, pt.y + yMid, 0));
+            colors.push(1.0, 1.0, 1.0);
+            sizes.push(this.data.particleSize * 1.08);
+          });
+        });
+
+        let geoParticles = new THREE.BufferGeometry().setFromPoints(thePoints);
+        geoParticles.setAttribute("customColor", new THREE.Float32BufferAttribute(colors, 3));
+        geoParticles.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
+
+        const material = new THREE.ShaderMaterial({
+          uniforms: {
+            color: { value: new THREE.Color(this.data.textColor) },
+            pointTexture: { value: this.particleImg },
+          },
+          vertexShader: document.getElementById("vertexshader").textContent,
+          fragmentShader: document.getElementById("fragmentshader").textContent,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          transparent: true,
+        });
+
+        this.particles = new THREE.Points(geoParticles, material);
+        this.scene.add(this.particles);
+
+        this.geometryCopy = new THREE.BufferGeometry();
+        this.geometryCopy.copy(this.particles.geometry);
+      }
+
+      visibleHeightAtZDepth(depth, camera) {
+        const cameraOffset = camera.position.z;
+        const dist = Math.abs(cameraOffset - (depth || 0));
+        const vFOV = (camera.fov * Math.PI) / 180;
+        return 2 * Math.tan(vFOV / 2) * dist;
+      }
+
+      visibleWidthAtZDepth(depth, camera) {
+        return this.visibleHeightAtZDepth(depth, camera) * camera.aspect;
+      }
+
+      distance(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+      }
+    }
+
+    /* =====================================================
+       4. THREE.JS ENVIRONMENT SETUP
+       ===================================================== */
+    class Environment {
+      constructor(font, particle) {
+        this.font = font;
+        this.particle = particle;
+        this.container = document.querySelector("#magic");
+        this.scene = new THREE.Scene();
+        this.createCamera();
+        this.createRenderer();
+        this.setup();
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        window.addEventListener("resize", this.onWindowResize.bind(this));
+      }
+
+      setup() {
+        this.createParticles = new CreateParticles(
+          this.scene,
+          this.font,
+          this.particle,
+          this.camera,
+          this.renderer
+        );
+      }
+
+      render() {
+        this.createParticles.render();
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      createCamera() {
+        this.camera = new THREE.PerspectiveCamera(
+          65,
+          this.container.clientWidth / this.container.clientHeight,
+          1,
+          10000
+        );
+        this.camera.position.set(0, 0, 100);
+      }
+
+      createRenderer() {
+        this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+        this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.container.appendChild(this.renderer.domElement);
+        this.renderer.setAnimationLoop(() => {
+          this.render();
+        });
+      }
+
+      onWindowResize() {
+        this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+        if (this.createParticles && typeof this.createParticles.onWindowResize === "function") {
+          this.createParticles.onWindowResize();
+        }
+      }
+    }
+
+    /* =====================================================
+       5. SYNCHRONOUS IMMEDIATE INITIALIZATION (0ms Load)
+       ===================================================== */
+    function initHineParticles() {
+      try {
+        const fontLoader = new THREE.FontLoader();
+        const typo = fontLoader.parse(INLINE_HINE_FONT_DATA);
+        const particleTex = createProceduralParticleTexture();
+        new Environment(typo, particleTex);
+        console.log("HINE 3D Particles initialized successfully!");
+      } catch (err) {
+        console.error("Three.js Environment initialization failed:", err);
+      }
+    }
+
+    // Initialize immediately upon DOM readiness
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initHineParticles);
+    } else {
+      initHineParticles();
+    }
+  </script>
+</body>
+</html>

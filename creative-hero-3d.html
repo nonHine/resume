@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NONHINE | IT &amp; Data Management — Interactive 3D Portfolio</title>
+
+  <!-- Google Fonts: DM Sans, Space Grotesk, Prompt, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&family=JetBrains+Mono:wght@400;500;600&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Three.js r125 (Local first, CDN fallback) -->
+  <script src="assets/three.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js';"></script>
+
+  <!-- Vertex Shader for 3D Particles -->
+  <script type="x-shader/x-vertex" id="vertexshader">
+    attribute float size;
+    attribute vec3 customColor;
+    varying vec3 vColor;
+    void main() {
+      vColor = customColor;
+      vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+      gl_PointSize = size * ( 300.0 / -mvPosition.z );
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  </script>
+
+  <!-- Fragment Shader for 3D Particles -->
+  <script type="x-shader/x-fragment" id="fragmentshader">
+    uniform vec3 color;
+    uniform sampler2D pointTexture;
+    varying vec3 vColor;
+    void main() {
+      gl_FragColor = vec4( color * vColor, 1.0 );
+      gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       RESET & THEME VARIABLES
+       ========================================================================== */
+    :root {
+      --bg: #09090b;
+      --accent-red: #ff3333;
+      --accent-red-glow: rgba(255, 51, 51, 0.45);
+      --text-white: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.72);
+      --text-dim: rgba(255, 255, 255, 0.35);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-heading: 'DM Sans', sans-serif;
+      --font-body: 'Prompt', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --border-hairline: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      background-color: var(--bg);
+    }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: var(--bg);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      user-select: none;
+      -webkit-user-select: none;
+      position: relative;
+    }
+
+    /* Hero Fullscreen Section */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 720px;
+      overflow: hidden;
+    }
+
+    /* Subtle background grid pattern (1:1 with user's uploaded reference) */
+    .bg-grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 70px 70px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Ambient Crimson Glow behind 3D Canvas & Portrait */
+    .crimson-ambient-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 85vw;
+      height: 70vh;
+      background: radial-gradient(
+        ellipse at 50% 45%,
+        rgba(255, 34, 0, 0.28) 0%,
+        rgba(255, 50, 10, 0.12) 38%,
+        rgba(9, 9, 11, 0) 72%
+      );
+      pointer-events: none;
+      filter: blur(65px);
+      z-index: 2;
+      animation: ambientBreath 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes ambientBreath {
+      0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.85; }
+      100% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       LAYER 1: THREE.JS INTERACTIVE 3D PARTICLES CANVAS (Behind Portrait)
+       ========================================================================== */
+    #magic {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3; /* Behind portrait (z-index 4) */
+      cursor: crosshair;
+    }
+
+    #magic canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ==========================================================================
+       LAYER 2: CENTER PORTRAIT CUT-OUT (Seamlessly Blended in Center)
+       ========================================================================== */
+    .hero-portrait-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 4;
+      pointer-events: none; /* Mouse passes through to Three.js canvas */
+    }
+
+    .portrait-image {
+      max-height: 86vh;
+      max-width: 90vw;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom center;
+      pointer-events: none;
+      filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.7));
+      /* Fade bottom gently into background */
+      mask-image: linear-gradient(to bottom, black 0%, black 82%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 82%, transparent 100%);
+      transform: translateY(2vh);
+      transition: transform 0.3s ease;
+    }
+
+    /* ==========================================================================
+       LAYER 3: FOREGROUND UI & 3-COLUMN CONTENT (1:1 with User Screenshot)
+       ========================================================================== */
+    .viewport-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      z-index: 10;
+      pointer-events: none; /* Allow pass-through to 3D canvas */
+      padding: 2.25rem 3.5rem;
+    }
+
+    /* Top Navigation Bar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ffffff;
+      pointer-events: auto;
+      text-decoration: none;
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-red);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-red);
+    }
+
+    .brand-divider {
+      color: var(--text-dim);
+      font-weight: 400;
+      margin-left: 0.25rem;
+    }
+
+    .brand-year {
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+      pointer-events: auto;
+    }
+
+    .nav-item a {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-item a .item-num {
+      color: var(--accent-red);
+      font-weight: 600;
+    }
+
+    .nav-item a:hover {
+      color: #ffffff;
+    }
+
+    /* Main Hero Content: 3-Column Layout */
+    .hero-content-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.25fr;
+      align-items: stretch;
+      width: 100%;
+      flex: 1;
+      margin-top: 1.5rem;
+      pointer-events: none;
+    }
+
+    /* Column 1 (Left): IT & DATA MANAGEMENT at bottom-left */
+    .hero-left-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-start;
+      margin-bottom: 2.5rem;
+      pointer-events: auto;
+      z-index: 12;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.95);
+    }
+
+    .title-line-1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .title-line-2 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-top: 0.35rem;
+    }
+
+    /* Column 2 (Center): Spacer reserved for Portrait & 3D Particles */
+    .hero-center-col {
+      /* Portrait sits physically in center via .hero-portrait-stage */
+      pointer-events: none;
+    }
+
+    /* Column 3 (Right): Profile Paragraph at top-right */
+    .hero-right-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-end;
+      text-align: right;
+      margin-top: 1rem;
+      pointer-events: auto;
+      z-index: 12;
+    }
+
+    .hero-thai-desc {
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 1.05vw, 0.98rem);
+      font-weight: 300;
+      line-height: 1.85;
+      color: rgba(255, 255, 255, 0.85);
+      text-align: right;
+      letter-spacing: -0.01em;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
+      max-width: 100%;
+    }
+
+    /* ==========================================================================
+       SECTION 02: SELECTED PROJECTS (Rayhan Aditya Dark Luxury Style)
+       ========================================================================== */
+    .projects-section {
+      position: relative;
+      width: 100%;
+      padding: 7rem 0 9rem;
+      background: #09090b;
+      z-index: 20;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .projects-container {
+      width: 100%;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 3.5rem;
+    }
+
+    .projects-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .projects-section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .projects-section-title .title-badge-red {
+      color: var(--accent-red);
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+    }
+
+    .view-all-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+    .view-all-link:hover {
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+
+    .projects-grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .project-card-link {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: #111115;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 1.5rem;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .project-card-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.3s ease;
+    }
+
+    .project-card-link:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 51, 51, 0.35);
+      background: #15151a;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 51, 51, 0.12);
+    }
+
+    .project-card-link:hover::before {
+      background: var(--accent-red);
+    }
+
+    /* Card Preview Window */
+    .card-preview-window {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: #09090c;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .window-header-bar {
+      height: 2.25rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      gap: 0.5rem;
+    }
+
+    .window-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .window-dot.red { background: #ff5f56; }
+    .window-dot.yellow { background: #ffbd2e; }
+    .window-dot.green { background: #27c93f; }
+
+    .window-url-bar {
+      margin-left: 0.5rem;
+      flex: 1;
+      max-width: 200px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      height: 1.15rem;
+      display: flex;
+      align-items: center;
+      padding: 0 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .window-stage-content {
+      flex: 1;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 51, 51, 0.05) 0%, transparent 70%);
+      overflow: hidden;
+    }
+
+    /* Card Bottom Meta */
+    .card-bottom-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.15rem;
+    }
+
+    .card-number {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent-red);
+      letter-spacing: -0.02em;
+    }
+
+    .card-headings-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .card-title-text {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1.25;
+      transition: color 0.2s ease;
+    }
+
+    .card-category-text {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.4;
+    }
+
+    .card-arrow-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      flex-shrink: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .project-card-link:hover .card-arrow-circle {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      transform: translate(3px, -3px);
+      box-shadow: 0 0 15px var(--accent-red);
+    }
+
+    .card-tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      list-style: none;
+      margin-top: auto;
+    }
+
+    .card-tag-badge {
+      font-family: var(--font-heading);
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+      transition: all 0.2s ease;
+    }
+
+    .project-card-link:hover .card-tag-badge {
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .projects-container {
+        padding: 0 2rem;
+      }
+      .projects-grid-3col {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .viewport-overlay {
+        padding: 1.5rem 2rem;
+      }
+      .nav-menu {
+        display: none;
+      }
+      .hero-content-stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 1.5rem;
+        text-align: center;
+      }
+      .hero-left-col {
+        align-items: center;
+        text-align: center;
+      }
+      .hero-right-col {
+        align-items: center;
+        text-align: center;
+      }
+      .hero-thai-desc {
+        text-align: center;
+      }
+      .portrait-image {
+        max-height: 65vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO SECTION WRAPPER -->
+  <section id="hero" class="hero-section">
+    <!-- Subtle background grid pattern -->
+    <div class="bg-grid-overlay"></div>
+
+    <!-- Ambient Crimson Glow Layer -->
+    <div class="crimson-ambient-glow" aria-hidden="true"></div>
+
+    <!-- LAYER 1: Three.js Interactive 3D Particles Canvas ("HINE" Physics behind portrait) -->
+    <div id="magic" aria-label="HINE 3D Interactive Particle Typography"></div>
+
+    <!-- LAYER 2: Portrait Cut-Out Standing in Center -->
+    <div class="hero-portrait-stage">
+      <img src="assets/portrait-cutout.png" alt="NonHine - NonHine" class="portrait-image" />
+    </div>
+
+    <!-- LAYER 3: Viewport UI & 3-Column Content Overlay -->
+    <div class="viewport-overlay">
+      
+      <!-- Top Navigation Bar -->
+      <header class="navbar">
+        <a href="#hero" class="nav-brand">
+          <span class="brand-dot"></span>
+          <span>NONHINE</span>
+          <span class="brand-divider">//</span>
+          <span class="brand-year">2569</span>
+        </a>
+
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="#hero"><span class="item-num">01</span> ABOUT</a></li>
+          <li class="nav-item"><a href="#work"><span class="item-num">02</span> SELECTED WORK</a></li>
+          <li class="nav-item"><a href="creative-developer.html#capabilities"><span class="item-num">03</span> CAPABILITIES</a></li>
+          <li class="nav-item"><a href="creative-developer.html#academic"><span class="item-num">04</span> ACADEMIC</a></li>
+          <li class="nav-item"><a href="creative-developer.html#contact"><span class="item-num">05</span> CONTACT</a></li>
+        </ul>
+
+        <!-- Right button to A4 Resume -->
+        <a href="index.html" target="_blank" rel="noopener noreferrer" style="font-family: var(--font-heading); font-size: 0.75rem; font-weight: 700; color: #ffffff; background: rgba(255, 51, 51, 0.15); border: 1px solid rgba(255, 51, 51, 0.4); padding: 0.45rem 0.95rem; border-radius: 999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.04em; transition: all 0.25s ease;" onmouseover="this.style.background='var(--accent-red)'; this.style.borderColor='var(--accent-red)';" onmouseout="this.style.background='rgba(255, 51, 51, 0.15)'; this.style.borderColor='rgba(255, 51, 51, 0.4)';">
+          <span>📄 A4 RESUME</span>
+        </a>
+      </header>
+
+      <!-- Main Hero: 3-Column Content -->
+      <div class="hero-content-stage">
+        
+        <!-- Column 1 (Left): IT & DATA MANAGEMENT at bottom-left -->
+        <div class="hero-left-col">
+          <div class="title-line-1">
+            IT &amp; DATA
+          </div>
+          <div class="title-line-2">
+            MANAGEMENT
+          </div>
+        </div>
+
+        <!-- Column 2 (Center): Reserved for Portrait & 3D Particles behind -->
+        <div class="hero-center-col"></div>
+
+        <!-- Column 3 (Right): Description in Thai at top-right -->
+        <div class="hero-right-col">
+          <p class="hero-thai-desc">
+            นักศึกษาชั้นปีที่ 1 สาขาวิชาสารสนเทศศาสตร์<br>
+            มหาวิทยาลัยขอนแก่น เชี่ยวชาญการประยุกต์ใช้ AI ระดับ<br>
+            Advance Vibe Code ผสานทักษะตัดต่อวิดีโอ ออกแบบสื่อ<br>
+            และพัฒนา Full-Stack Web Application สู่ผลงานที่ใช้ได้จริง
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       SECTION 02: SELECTED PROJECTS (Grid 2x2 with Vector Mockups & GitHub Links)
+       ========================================================================== -->
+  <section id="work" class="projects-section">
+    <div class="projects-container">
+      
+      <!-- Section Header Row -->
+      <div class="projects-header-row">
+        <h2 class="projects-section-title">
+          <span>SELECTED PROJECTS</span>
+          <span class="title-badge-red">/ 03</span>
+        </h2>
+        <a href="https://github.com/nonHine" target="_blank" rel="noopener noreferrer" class="view-all-link">
+          <span>VIEW GITHUB REPOSITORIES</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+
+      <!-- 3-Column Projects Grid -->
+      <div class="projects-grid-3col">
+
+        <!-- CARD 01: Larb Raek Phob Tickets -->
+        <a href="https://github.com/nonHine/larb-raek-phob-tickets" target="_blank" rel="noopener noreferrer" class="project-card-link">
+          <div class="card-preview-window">
+            <div class="window-header-bar">
+              <span class="window-dot red"></span>
+              <span class="window-dot yellow"></span>
+              <span class="window-dot green"></span>
+              <div class="window-url-bar">larb-raek-phob.vercel.app</div>
+            </div>
+            <div class="window-stage-content">
+              <!-- Stylized Ticket & AI Verification UI -->
+              <div style="display: flex; gap: 1.5rem; width: 92%; max-width: 500px; background: rgba(18, 18, 22, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.25rem; backdrop-filter: blur(12px); box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
+                <!-- Left Ticket QR -->
+                <div style="width: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ffffff; border-radius: 8px; padding: 8px; color: #000;">
+                  <svg width="70" height="70" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 4h4v4h-4v-4zm-4 2h2v2h-2v-2z"/>
+                  </svg>
+                  <span style="font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; margin-top: 4px; color: #000;">PROMPTPAY QR</span>
+                </div>
+                <!-- Right Ticket Meta -->
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                  <div>
+                    <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #ff3333; letter-spacing: 0.08em; font-weight: 700;">KKU STUDENT EVENT PASS</div>
+                    <div style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; color: #ffffff; margin-top: 2px;">LARB RAEK PHOB 2569</div>
+                    <div style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 4px;">PASS ID: #LRP-2569-084 · KKBS COLLAB</div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; background: rgba(39, 201, 63, 0.15); border: 1px solid rgba(39, 201, 63, 0.4); padding: 0.25rem 0.65rem; border-radius: 9999px;">
+                      <span style="width: 6px; height: 6px; background: #27c93f; border-radius: 50%; box-shadow: 0 0 6px #27c93f;"></span>
+                      <span style="font-family: var(--font-mono); font-size: 0.6rem; color: #27c93f; font-weight: 600;">AI OCR SLIP VERIFIED</span>
+                    </div>
+                    <span style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: #ffffff;">THB 150</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-bottom-info">
+            <div class="card-title-group">
+              <span class="card-number">01</span>
+              <div class="card-headings-wrap">
+                <h3 class="card-title-text">LARB RAEK PHOB TICKETS</h3>
+                <span class="card-category-text">LEAD FULL-STACK &amp; AI SYSTEM DEVELOPER · EVENT TICKETING</span>
+              </div>
+            </div>
+            <div class="card-arrow-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </div>
+          </div>
+          <ul class="card-tags-list">
+            <li class="card-tag-badge">Next.js</li>
+            <li class="card-tag-badge">TypeScript</li>
+            <li class="card-tag-badge">Supabase</li>
+            <li class="card-tag-badge">PostgreSQL</li>
+            <li class="card-tag-badge">AI Slip OCR</li>
+            <li class="card-tag-badge">PromptPay QR</li>
+          </ul>
+        </a>
+
+        <!-- CARD 02: ROADMAP.STUDIO -->
+        <a href="https://github.com/nonHine" target="_blank" rel="noopener noreferrer" class="project-card-link">
+          <div class="card-preview-window">
+            <div class="window-header-bar">
+              <span class="window-dot red"></span>
+              <span class="window-dot yellow"></span>
+              <span class="window-dot green"></span>
+              <div class="window-url-bar">roadmap.studio/cefr-b2</div>
+            </div>
+            <div class="window-stage-content">
+              <!-- Stylized EdTech Exam UI -->
+              <div style="width: 92%; max-width: 500px; background: rgba(18, 18, 22, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.25rem; backdrop-filter: blur(12px); box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.6rem; margin-bottom: 0.75rem;">
+                  <span style="font-family: var(--font-mono); font-size: 0.65rem; color: #ff3333; font-weight: 700;">CEFR B2 ENGLISH EXAM ENGINE</span>
+                  <span style="font-family: var(--font-mono); font-size: 0.65rem; color: #27c93f; background: rgba(39, 201, 63, 0.12); padding: 0.15rem 0.5rem; border-radius: 4px;">⚡ 100% OFFLINE-READY</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 51, 51, 0.15); border: 1px solid rgba(255, 51, 51, 0.3); display: flex; align-items: center; justify-content: center; color: #ff3333;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                  </div>
+                  <div style="flex: 1;">
+                    <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; color: #ffffff;">Question 42 of 100 · Listening Audio Synthesis</div>
+                    <div style="display: flex; gap: 3px; align-items: center; height: 12px; margin-top: 4px;">
+                      <span style="width: 3px; height: 6px; background: #ff3333; border-radius: 2px;"></span>
+                      <span style="width: 3px; height: 12px; background: #ff3333; border-radius: 2px;"></span>
+                      <span style="width: 3px; height: 9px; background: #ff3333; border-radius: 2px;"></span>
+                      <span style="width: 3px; height: 14px; background: #ff3333; border-radius: 2px;"></span>
+                      <span style="width: 3px; height: 8px; background: #ff3333; border-radius: 2px;"></span>
+                      <span style="width: 3px; height: 11px; background: #ff3333; border-radius: 2px;"></span>
+                      <span style="width: 3px; height: 5px; background: #ff3333; border-radius: 2px;"></span>
+                    </div>
+                  </div>
+                  <div style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 800; color: #ffffff;">88/100</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                  <div style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.4rem 0.6rem; border-radius: 6px;">A. Systematic</div>
+                  <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #27c93f; background: rgba(39, 201, 63, 0.1); border: 1px solid rgba(39, 201, 63, 0.3); padding: 0.4rem 0.6rem; border-radius: 6px; font-weight: 600;">B. Synthesize (✓)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-bottom-info">
+            <div class="card-title-group">
+              <span class="card-number">02</span>
+              <div class="card-headings-wrap">
+                <h3 class="card-title-text">ROADMAP.STUDIO</h3>
+                <span class="card-category-text">INTERACTIVE LEARNING WEB DEVELOPER · CEFR B2 EDTECH HUB</span>
+              </div>
+            </div>
+            <div class="card-arrow-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </div>
+          </div>
+          <ul class="card-tags-list">
+            <li class="card-tag-badge">JavaScript ES6+</li>
+            <li class="card-tag-badge">Offline-Ready PWA</li>
+            <li class="card-tag-badge">Web Audio API</li>
+            <li class="card-tag-badge">CEFR B2 Hub</li>
+            <li class="card-tag-badge">100 Dynamic Exams</li>
+          </ul>
+        </a>
+
+        <!-- CARD 03: AI for Editor and Motion Animation -->
+        <a href="https://github.com/nonHine" target="_blank" rel="noopener noreferrer" class="project-card-link">
+          <div class="card-preview-window">
+            <div class="window-header-bar">
+              <span class="window-dot red"></span>
+              <span class="window-dot yellow"></span>
+              <span class="window-dot green"></span>
+              <div class="window-url-bar">davinci.studio/ai-motion-render</div>
+            </div>
+            <div class="window-stage-content">
+              <!-- Stylized DaVinci / CapCut AI Motion Studio UI -->
+              <div style="width: 95%; max-width: 520px; background: rgba(15, 15, 20, 0.92); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.15rem; backdrop-filter: blur(14px); box-shadow: 0 15px 35px rgba(0,0,0,0.6);">
+                <!-- Studio Top Status Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.55rem; margin-bottom: 0.75rem;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ff3333; box-shadow: 0 0 8px #ff3333;"></span>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: #ff3333; font-weight: 700; letter-spacing: 0.06em;">AI MOTION &amp; TIMELINE</span>
+                  </div>
+                  <div style="display: flex; gap: 6px;">
+                    <span style="font-family: var(--font-mono); font-size: 0.6rem; color: #27c93f; background: rgba(39, 201, 63, 0.12); padding: 0.15rem 0.45rem; border-radius: 4px; border: 1px solid rgba(39, 201, 63, 0.3);">4K · 60 FPS</span>
+                    <span style="font-family: var(--font-mono); font-size: 0.6rem; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 0.15rem 0.45rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3);">AI SYNC</span>
+                  </div>
+                </div>
+
+                <!-- Mini Monitor & Video Frame Preview -->
+                <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.6rem 0.85rem; margin-bottom: 0.65rem; display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 26px; height: 26px; border-radius: 6px; background: rgba(255, 51, 51, 0.2); border: 1px solid rgba(255,51,51,0.4); display: flex; align-items: center; justify-content: center; color: #ff3333;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                      </svg>
+                    </div>
+                    <div>
+                      <div style="font-family: var(--font-heading); font-size: 0.75rem; font-weight: 700; color: #ffffff;">Motion Sequence // Scene 03</div>
+                      <div style="font-family: var(--font-mono); font-size: 0.58rem; color: rgba(255,255,255,0.45);">Prompt: &quot;Dynamic cinematic neon particle flow&quot;</div>
+                    </div>
+                  </div>
+                  <div style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: #ff3333; letter-spacing: 0.05em;">
+                    00:01:24:18
+                  </div>
+                </div>
+
+                <!-- Multi-Track Timeline Layers -->
+                <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 0.65rem;">
+                  <!-- Track V1 (Video & Keyframes) -->
+                  <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.02); padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.04);">
+                    <span style="font-family: var(--font-mono); font-size: 0.55rem; color: #94a3b8; width: 18px;">V1</span>
+                    <div style="flex: 1; height: 16px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 3px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px;">
+                      <span style="font-family: var(--font-mono); font-size: 0.52rem; color: #38bdf8; font-weight: 600;">CLIP_AI_01.MP4</span>
+                      <span style="color: #ffbd2e; font-size: 0.6rem;">◆ ◆ ◆</span>
+                      <span style="font-family: var(--font-mono); font-size: 0.52rem; color: rgba(255,255,255,0.6);">SPEED RAMP</span>
+                    </div>
+                  </div>
+
+                  <!-- Track A1 (Audio Waveform) -->
+                  <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.02); padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.04);">
+                    <span style="font-family: var(--font-mono); font-size: 0.55rem; color: #94a3b8; width: 18px;">A1</span>
+                    <div style="flex: 1; height: 16px; background: rgba(39, 201, 63, 0.12); border: 1px solid rgba(39, 201, 63, 0.35); border-radius: 3px; display: flex; align-items: center; padding: 0 8px; gap: 2px;">
+                      <span style="display: inline-block; width: 2px; height: 6px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 12px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 8px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 14px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 10px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 5px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 13px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 9px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 11px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="display: inline-block; width: 2px; height: 6px; background: #27c93f; border-radius: 1px;"></span>
+                      <span style="flex: 1;"></span>
+                      <span style="font-family: var(--font-mono); font-size: 0.52rem; color: #27c93f;">BEAT MATCHED</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Metric Row -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.5rem; font-family: var(--font-mono); font-size: 0.62rem;">
+                  <span style="color: #ff3333; font-weight: 700;">● TIME SAVED: -80%</span>
+                  <span style="color: rgba(255,255,255,0.45);">CAPCUT &amp; DAVINCI WORKFLOW</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-bottom-info">
+            <div class="card-title-group">
+              <span class="card-number">03</span>
+              <div class="card-headings-wrap">
+                <h3 class="card-title-text">AI FOR EDITOR &amp; MOTION ANIMATION</h3>
+                <span class="card-category-text">CREATIVE VIDEO &amp; AI WORKFLOW SPECIALIST · MOTION GRAPHICS</span>
+              </div>
+            </div>
+            <div class="card-arrow-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </div>
+          </div>
+          <ul class="card-tags-list">
+            <li class="card-tag-badge">CapCut</li>
+            <li class="card-tag-badge">DaVinci Resolve</li>
+            <li class="card-tag-badge">Motion AI</li>
+            <li class="card-tag-badge">Prompt-to-Video</li>
+            <li class="card-tag-badge">Storyboarding</li>
+            <li class="card-tag-badge">Time Saved 80%</li>
+          </ul>
+        </a>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       THREE.JS SCRIPT: 3D PARTICLES "HINE" ENGINE (From resume-3d.html)
+       ========================================================================== -->
+  <script>
+    /* =====================================================
+       1. EMBEDDED GLYPH SUBSET FOR "HINE" (100% Offline)
+       ===================================================== */
+    const INLINE_HINE_FONT_DATA = {
+      familyName: "HINE-Font",
+      ascender: 1319,
+      descender: -347,
+      underlinePosition: -312,
+      underlineThickness: 69,
+      boundingBox: { yMin: -324, xMin: -201, yMax: 1310, xMax: 1540 },
+      resolution: 1000,
+      cssFontWeight: "normal",
+      cssFontStyle: "normal",
+      glyphs: {
+        "H": {
+          ha: 1019,
+          x_min: 139,
+          x_max: 881,
+          o: "m 139 0 l 139 972 l 251 972 l 251 546 l 768 546 l 768 972 l 881 972 l 881 0 l 768 0 l 768 443 l 251 443 l 251 0 l 139 0 z "
+        },
+        "I": {
+          ha: 651,
+          x_min: 125,
+          x_max: 526,
+          o: "m 125 0 l 125 97 l 269 97 l 269 875 l 125 875 l 125 972 l 526 972 l 526 875 l 382 875 l 382 97 l 526 97 l 526 0 l 125 0 z "
+        },
+        "N": {
+          ha: 1021,
+          x_min: 139,
+          x_max: 882,
+          o: "m 139 0 l 139 972 l 324 972 l 763 103 l 771 103 l 771 972 l 882 972 l 882 0 l 693 0 l 260 869 l 251 869 l 251 0 l 139 0 z "
+        },
+        "E": {
+          ha: 778,
+          x_min: 139,
+          x_max: 708,
+          o: "m 139 0 l 139 972 l 693 972 l 693 869 l 251 869 l 251 546 l 632 546 l 632 444 l 251 444 l 251 101 l 708 101 l 708 0 l 139 0 z "
+        },
+        " ": {
+          ha: 389,
+          x_min: 0,
+          x_max: 0,
+          o: ""
+        }
+      }
+    };
+
+    /* =====================================================
+       2. PROCEDURAL RADIAL PARTICLE SPRITE (100% Offline)
+       ===================================================== */
+    function createProceduralParticleTexture() {
+      const c = document.createElement("canvas");
+      c.width = 64;
+      c.height = 64;
+      const ctx = c.getContext("2d");
+      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, "rgba(255,255,255,1)");
+      g.addColorStop(0.3, "rgba(255,255,255,0.9)");
+      g.addColorStop(0.65, "rgba(255,255,255,0.3)");
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    }
+
+    /* =====================================================
+       3. THREE.JS PARTICLE TYPOGRAPHY CLASS
+       ===================================================== */
+    class CreateParticles {
+      constructor(scene, font, particleImg, camera, renderer) {
+        this.scene = scene;
+        this.font = font;
+        this.particleImg = particleImg;
+        this.camera = camera;
+        this.renderer = renderer;
+
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2(-200, 200);
+        this.colorChange = new THREE.Color();
+        this.buttom = false; // Hold state
+        window.debugParticlesInstance = this;
+
+        const visW = this.visibleWidthAtZDepth(0, this.camera);
+        // Computed responsive text size (fills nicely behind portrait)
+        const computedTextSize = Math.min(42, Math.max(20, Math.floor(visW * 0.20)));
+
+        this.data = {
+          text: "HINE",
+          textColor: 0xffffff,
+          particleSize: 1.25,
+          textSize: computedTextSize,
+          area: 260, // Hover radius
+          ease: 0.05,
+        };
+
+        this.setup();
+        this.bindEvents();
+      }
+
+      setup() {
+        const geometry = new THREE.PlaneGeometry(
+          this.visibleWidthAtZDepth(0, this.camera),
+          this.visibleHeightAtZDepth(0, this.camera)
+        );
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0, depthWrite: false });
+        this.planeArea = new THREE.Mesh(geometry, material);
+        this.planeArea.visible = true;
+        this.scene.add(this.planeArea);
+
+        this.createText();
+      }
+
+      bindEvents() {
+        const onDown = (e) => {
+          if (e.target && e.target.closest && e.target.closest("button, a, .project-card-link, .projects-section")) return;
+          this.onMouseDown(e);
+        };
+        const onMove = (e) => {
+          this.onMouseMove(e);
+        };
+        const onUp = () => this.onMouseUp();
+
+        // Listen on window so dragging anywhere over the viewport interacts with particles
+        window.addEventListener("pointerdown", onDown);
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+
+        window.addEventListener("mousedown", onDown);
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", onUp);
+
+        window.addEventListener("touchstart", (e) => {
+          if (e.touches && e.touches.length > 0) onDown(e.touches[0]);
+        }, { passive: true });
+        window.addEventListener("touchmove", (e) => {
+          if (e.touches && e.touches.length > 0) onMove(e.touches[0]);
+        }, { passive: true });
+        window.addEventListener("touchend", onUp);
+        window.addEventListener("mouseleave", onUp);
+      }
+
+      onWindowResize() {
+        if (this.planeArea && this.planeArea.geometry) {
+          this.planeArea.geometry.dispose();
+          this.planeArea.geometry = new THREE.PlaneGeometry(
+            this.visibleWidthAtZDepth(0, this.camera),
+            this.visibleHeightAtZDepth(0, this.camera)
+          );
+        }
+      }
+
+      onMouseDown(event) {
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        // Shockwave explosion: Expand blast radius & reduce damping
+        this.buttom = true;
+        this.data.area = 680;
+        this.data.ease = 0.012;
+      }
+
+      onMouseUp() {
+        this.buttom = false;
+        this.data.area = 260;
+        this.data.ease = 0.055;
+      }
+
+      onMouseMove(event) {
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      }
+
+      render() {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObject(this.planeArea);
+
+        if (intersects.length > 0) {
+          const pos = this.particles.geometry.attributes.position;
+          const copy = this.geometryCopy.attributes.position;
+          const colors = this.particles.geometry.attributes.customColor;
+          const size = this.particles.geometry.attributes.size;
+
+          const mx = intersects[0].point.x;
+          const my = intersects[0].point.y;
+
+          for (let i = 0, l = pos.count; i < l; i++) {
+            const initX = copy.getX(i);
+            const initY = copy.getY(i);
+            const initZ = copy.getZ(i);
+
+            let px = pos.getX(i);
+            let py = pos.getY(i);
+            let pz = pos.getZ(i);
+
+            // Default: Crisp Luminous White
+            this.colorChange.setHSL(0.5, 1.0, 1.0);
+            colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+            size.array[i] = this.data.particleSize;
+
+            let dx = mx - px;
+            let dy = my - py;
+            let d = (dx = mx - px) * dx + (dy = my - py) * dy;
+            const mouseDistance = this.distance(mx, my, px, py);
+            const f = -this.data.area / d;
+
+            if (this.buttom) {
+              // Click & Hold Shockwave Blast
+              const t = Math.atan2(dy, dx);
+              px -= f * Math.cos(t);
+              py -= f * Math.sin(t);
+
+              const distFromHome = Math.hypot(px - initX, py - initY);
+              if (distFromHome > 10) {
+                // Fiery crimson sparks (#ff2200)
+                this.colorChange.setHSL(0.022, 1.0, 0.56);
+                size.array[i] = this.data.particleSize * 1.35;
+              } else {
+                this.colorChange.setHSL(0.5, 1.0, 1.0);
+                size.array[i] = this.data.particleSize * 1.05;
+              }
+              colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+            } else {
+              // Hover dispersal
+              if (mouseDistance < this.data.area) {
+                const t = Math.atan2(dy, dx);
+                px += f * Math.cos(t);
+                py += f * Math.sin(t);
+
+                const distFromHome = Math.hypot(px - initX, py - initY);
+                if (distFromHome > 7) {
+                  this.colorChange.setHSL(0.022, 1.0, 0.56);
+                  size.array[i] = this.data.particleSize * 1.25;
+                } else {
+                  this.colorChange.setHSL(0.5, 1.0, 1.0);
+                  size.array[i] = this.data.particleSize * 1.1;
+                }
+                colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+              }
+            }
+
+            // Spring return to home position
+            px += (initX - px) * this.data.ease;
+            py += (initY - py) * this.data.ease;
+            pz += (initZ - pz) * this.data.ease;
+
+            pos.setXYZ(i, px, py, pz);
+          }
+
+          pos.needsUpdate = true;
+          colors.needsUpdate = true;
+          size.needsUpdate = true;
+        }
+      }
+
+      createText() {
+        let thePoints = [];
+        let shapes = this.font.generateShapes(this.data.text, this.data.textSize);
+        let geometry = new THREE.ShapeGeometry(shapes);
+        geometry.computeBoundingBox();
+
+        const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+        const yMid = -0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
+        geometry.center();
+
+        const posAttr = geometry.attributes.position;
+        const indexAttr = geometry.index;
+        const triCount = indexAttr ? indexAttr.count / 3 : posAttr.count / 3;
+
+        let areas = [];
+        let totalArea = 0;
+        for (let t = 0; t < triCount; t++) {
+          const i0 = indexAttr ? indexAttr.getX(t * 3) : t * 3;
+          const i1 = indexAttr ? indexAttr.getX(t * 3 + 1) : t * 3 + 1;
+          const i2 = indexAttr ? indexAttr.getX(t * 3 + 2) : t * 3 + 2;
+
+          const ax = posAttr.getX(i0), ay = posAttr.getY(i0);
+          const bx = posAttr.getX(i1), by = posAttr.getY(i1);
+          const cx = posAttr.getX(i2), cy = posAttr.getY(i2);
+
+          const area = 0.5 * Math.abs((bx - ax) * (cy - ay) - (by - ay) * (cx - ax));
+          areas.push(area);
+          totalArea += area;
+        }
+
+        let colors = [];
+        let sizes = [];
+
+        // 1. Uniform Dense Interior Infill (~5,500 particles)
+        const TARGET_INTERIOR_POINTS = 5500;
+        for (let t = 0; t < triCount; t++) {
+          const i0 = indexAttr ? indexAttr.getX(t * 3) : t * 3;
+          const i1 = indexAttr ? indexAttr.getX(t * 3 + 1) : t * 3 + 1;
+          const i2 = indexAttr ? indexAttr.getX(t * 3 + 2) : t * 3 + 2;
+
+          const ax = posAttr.getX(i0), ay = posAttr.getY(i0);
+          const bx = posAttr.getX(i1), by = posAttr.getY(i1);
+          const cx = posAttr.getX(i2), cy = posAttr.getY(i2);
+
+          const numPoints = Math.max(1, Math.round((areas[t] / totalArea) * TARGET_INTERIOR_POINTS));
+          for (let k = 0; k < numPoints; k++) {
+            let r1 = Math.random();
+            let r2 = Math.random();
+            if (r1 + r2 > 1) {
+              r1 = 1 - r1;
+              r2 = 1 - r2;
+            }
+            const px = ax + r1 * (bx - ax) + r2 * (cx - ax);
+            const py = ay + r1 * (by - ay) + r2 * (cy - ay);
+
+            thePoints.push(new THREE.Vector3(px, py, 0));
+            colors.push(1.0, 1.0, 1.0);
+            sizes.push(this.data.particleSize * (0.85 + Math.random() * 0.35));
+          }
+        }
+
+        // 2. High-precision Outer Contour Boundary (~1,500 boundary particles)
+        shapes.forEach((shape) => {
+          const edgePts = shape.getSpacedPoints(250);
+          edgePts.forEach((pt) => {
+            thePoints.push(new THREE.Vector3(pt.x + xMid, pt.y + yMid, 0));
+            colors.push(1.0, 1.0, 1.0);
+            sizes.push(this.data.particleSize * 1.08);
+          });
+        });
+
+        let geoParticles = new THREE.BufferGeometry().setFromPoints(thePoints);
+        geoParticles.setAttribute("customColor", new THREE.Float32BufferAttribute(colors, 3));
+        geoParticles.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
+
+        const material = new THREE.ShaderMaterial({
+          uniforms: {
+            color: { value: new THREE.Color(this.data.textColor) },
+            pointTexture: { value: this.particleImg },
+          },
+          vertexShader: document.getElementById("vertexshader").textContent,
+          fragmentShader: document.getElementById("fragmentshader").textContent,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          transparent: true,
+        });
+
+        this.particles = new THREE.Points(geoParticles, material);
+        this.scene.add(this.particles);
+
+        this.geometryCopy = new THREE.BufferGeometry();
+        this.geometryCopy.copy(this.particles.geometry);
+      }
+
+      visibleHeightAtZDepth(depth, camera) {
+        const cameraOffset = camera.position.z;
+        const dist = Math.abs(cameraOffset - (depth || 0));
+        const vFOV = (camera.fov * Math.PI) / 180;
+        return 2 * Math.tan(vFOV / 2) * dist;
+      }
+
+      visibleWidthAtZDepth(depth, camera) {
+        return this.visibleHeightAtZDepth(depth, camera) * camera.aspect;
+      }
+
+      distance(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+      }
+    }
+
+    /* =====================================================
+       4. THREE.JS ENVIRONMENT SETUP
+       ===================================================== */
+    class Environment {
+      constructor(font, particle) {
+        this.font = font;
+        this.particle = particle;
+        this.container = document.querySelector("#magic");
+        this.scene = new THREE.Scene();
+        this.createCamera();
+        this.createRenderer();
+        this.setup();
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        window.addEventListener("resize", this.onWindowResize.bind(this));
+      }
+
+      setup() {
+        this.createParticles = new CreateParticles(
+          this.scene,
+          this.font,
+          this.particle,
+          this.camera,
+          this.renderer
+        );
+      }
+
+      render() {
+        this.createParticles.render();
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      createCamera() {
+        this.camera = new THREE.PerspectiveCamera(
+          65,
+          this.container.clientWidth / this.container.clientHeight,
+          1,
+          10000
+        );
+        this.camera.position.set(0, 0, 100);
+      }
+
+      createRenderer() {
+        this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+        this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.container.appendChild(this.renderer.domElement);
+        this.renderer.setAnimationLoop(() => {
+          this.render();
+        });
+      }
+
+      onWindowResize() {
+        this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+        if (this.createParticles && typeof this.createParticles.onWindowResize === "function") {
+          this.createParticles.onWindowResize();
+        }
+      }
+    }
+
+    /* =====================================================
+       5. SYNCHRONOUS IMMEDIATE INITIALIZATION (0ms Load)
+       ===================================================== */
+    function initHineParticles() {
+      try {
+        const fontLoader = new THREE.FontLoader();
+        const typo = fontLoader.parse(INLINE_HINE_FONT_DATA);
+        const particleTex = createProceduralParticleTexture();
+        new Environment(typo, particleTex);
+        console.log("HINE 3D Particles behind portrait initialized successfully!");
+      } catch (err) {
+        console.error("Three.js Environment initialization failed:", err);
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initHineParticles);
+    } else {
+      initHineParticles();
+    }
+  </script>
+</body>
+</html>
