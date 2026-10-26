@@ -2,7 +2,8 @@
 
 > **NonHine (Creative Developer & IT Data Specialist)**  
 > นักศึกษาชั้นปีที่ 1 สาขาวิชาสารสนเทศศาสตร์ คณะมนุษยศาสตร์และสังคมศาสตร์ มหาวิทยาลัยขอนแก่น (ปีการศึกษา 2569)  
-> **IT & Data Management · Full-Stack & Advance Vibe Code Developer · Creative Media Specialist**
+> **เด็กศิลป์ภาษาภูเก็ตที่ Self-Taught สู่สาย Tech · ปัจจุบันศึกษาปี 1 สารสนเทศศาสตร์ มข.**  
+> *Creative Full-Stack Web Developer & Video Media Specialist with AI Acceleration*
 
 [![GitHub](https://img.shields.io/badge/GitHub-nonHine-181717?style=for-the-badge&logo=github)](https://github.com/nonHine)
 [![Email](https://img.shields.io/badge/Email-developer.portfolio%40example.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:developer.portfolio@example.com)
