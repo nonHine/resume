@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NONHINE | IT &amp; Data Management — Interactive 3D Portfolio</title>
+  <title>NONHINE | RESUME — Interactive 3D Portfolio</title>
 
   <!-- Google Fonts: DM Sans, Space Grotesk, Prompt, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -161,16 +161,20 @@
       height: 100%;
       z-index: 3; /* Behind portrait (z-index 4) */
       cursor: crosshair;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     #magic canvas {
       display: block;
       width: 100% !important;
       height: 100% !important;
+      touch-action: none;
     }
 
     /* ==========================================================================
-       LAYER 2: CENTER PORTRAIT CUT-OUT (Seamlessly Blended in Center)
+       LAYER 2: CENTER PORTRAIT CUT-OUT (Commanding, Scaled-Up Centerpiece)
        ========================================================================== */
     .hero-portrait-stage {
       position: absolute;
@@ -180,20 +184,23 @@
       align-items: flex-end;
       z-index: 4;
       pointer-events: none; /* Mouse passes through to Three.js canvas */
+      overflow: hidden;
     }
 
     .portrait-image {
-      max-height: 86vh;
-      max-width: 90vw;
+      height: 96vh;
+      max-height: 96vh;
       width: auto;
+      max-width: none;
       object-fit: contain;
       object-position: bottom center;
       pointer-events: none;
-      filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.7));
+      filter: drop-shadow(0 25px 65px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 50px rgba(255, 51, 51, 0.28));
       /* Fade bottom gently into background */
-      mask-image: linear-gradient(to bottom, black 0%, black 82%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 82%, transparent 100%);
-      transform: translateY(2vh);
+      mask-image: linear-gradient(to bottom, black 0%, black 86%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 86%, transparent 100%);
+      transform: translateX(2.15%);
+      transform-origin: bottom center;
       transition: transform 0.3s ease;
     }
 
@@ -318,7 +325,7 @@
     /* Main Hero Content: 3-Column Layout */
     .hero-content-stage {
       display: grid;
-      grid-template-columns: 1fr 1fr 1.25fr;
+      grid-template-columns: 1fr 1.35fr 1.15fr;
       align-items: stretch;
       width: 100%;
       flex: 1;
@@ -553,15 +560,15 @@
       transform: translate3d(0px, 0px, 0px);
     }
 
-    /* Webflow .scroll-card Centered Stage Focus & outQuart Hover Animation (GPU Composited 120fps) */
+    /* Webflow .scroll-card Centered Stage Focus & GPU Composited 120fps Phone Mockup */
     .scroll-card {
       position: relative;
       bottom: 0;
       display: flex;
       overflow: hidden;
       width: 44vw;
-      min-width: 500px;
-      max-width: 680px;
+      min-width: 480px;
+      max-width: 660px;
       height: 74vh;
       min-height: 30rem;
       max-height: 640px;
@@ -570,51 +577,112 @@
       flex-direction: column;
       align-items: center;
       flex: 0 0 auto;
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      border-radius: 2rem;
-      background-color: #111116;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 2.35rem;
+      background-color: #0c0c11;
       text-decoration: none;
       color: inherit;
       cursor: pointer;
-      --card-scale: 0.92;
-      --card-y: 0%;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
       opacity: 0.45;
       will-change: transform, opacity;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      transform: translate3d(0, var(--card-y), 0) scale3d(var(--card-scale), var(--card-scale), 1);
-      transition: transform 420ms cubic-bezier(0.165, 0.84, 0.44, 1),
-                  border-color 400ms cubic-bezier(0.165, 0.84, 0.44, 1),
-                  box-shadow 500ms cubic-bezier(0.165, 0.84, 0.44, 1);
+      transform: translate3d(0, 0, 0) scale3d(0.92, 0.92, 1);
+      /* Smooth transitions strictly for borders — ZERO transition on transform/box-shadow during scroll */
+      transition: border-color 250ms ease;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.9),
+                  0 0 0 1px rgba(255, 255, 255, 0.08),
+                  0 24px 60px -10px rgba(0, 0, 0, 0.85);
     }
 
+    /* Active Phone Center State */
     .scroll-card.is-active-center {
-      border-color: rgba(255, 51, 51, 0.38);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), 0 0 32px rgba(255, 51, 51, 0.12);
+      border-color: rgba(255, 51, 51, 0.55);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.9),
+                  0 0 0 1px rgba(255, 51, 51, 0.35),
+                  0 28px 70px -10px rgba(0, 0, 0, 0.92),
+                  0 0 35px rgba(255, 51, 51, 0.22);
     }
 
     .scroll-card.card-gold.is-active-center {
-      border-color: rgba(245, 158, 11, 0.42);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), 0 0 32px rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.9),
+                  0 0 0 1px rgba(245, 158, 11, 0.35),
+                  0 28px 70px -10px rgba(0, 0, 0, 0.92),
+                  0 0 35px rgba(245, 158, 11, 0.24);
     }
 
-    .scroll-card:hover {
-      border-color: rgba(255, 255, 255, 0.28);
+    /* Desktop Hover Lift */
+    @media (hover: hover) {
+      .scroll-card:hover {
+        border-color: rgba(255, 255, 255, 0.32);
+      }
+
+      .scroll-card.is-active-center:hover {
+        border-color: rgba(255, 51, 51, 0.75);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.9),
+                    0 0 0 1px rgba(255, 51, 51, 0.45),
+                    0 32px 75px rgba(0, 0, 0, 0.92),
+                    0 0 45px rgba(255, 51, 51, 0.3);
+      }
+
+      .scroll-card.card-gold.is-active-center:hover {
+        border-color: rgba(245, 158, 11, 0.8);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.9),
+                    0 0 0 1px rgba(245, 158, 11, 0.45),
+                    0 32px 75px rgba(0, 0, 0, 0.92),
+                    0 0 45px rgba(245, 158, 11, 0.32);
+      }
     }
 
-    .scroll-card.is-active-center:hover {
-      --card-y: -3.5%;
-      border-color: rgba(255, 51, 51, 0.58);
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.82), 0 0 42px rgba(255, 51, 51, 0.2);
+    /* Tactile Touch / Press Feedback (เอฟเฟคสัมผัส) */
+    .scroll-card:active {
+      filter: brightness(1.08);
+      box-shadow: inset 0 0 0 1px rgba(255, 51, 51, 0.55),
+                  0 12px 35px rgba(0, 0, 0, 0.95),
+                  0 0 40px rgba(255, 51, 51, 0.45) !important;
     }
 
-    .scroll-card.card-gold.is-active-center:hover {
-      --card-y: -3.5%;
-      border-color: rgba(245, 158, 11, 0.62);
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.82), 0 0 42px rgba(245, 158, 11, 0.24);
+    .scroll-card.card-gold:active {
+      box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.55),
+                  0 12px 35px rgba(0, 0, 0, 0.95),
+                  0 0 40px rgba(245, 158, 11, 0.45) !important;
     }
 
-    /* Webflow .media-wrapper (Golden Ratio 61.803398875%) */
+    /* Dynamic Touch Coordinates Ripple Pulse */
+    .touch-ripple-effect {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      margin-left: -12px;
+      margin-top: -12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 51, 51, 0.65) 0%, rgba(255, 51, 51, 0.22) 45%, transparent 75%);
+      pointer-events: none;
+      z-index: 45;
+      transform: scale(0);
+      animation: ripplePulse 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+
+    .scroll-card.card-gold .touch-ripple-effect {
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.55) 0%, rgba(245, 158, 11, 0.2) 50%, transparent 80%);
+    }
+
+    @keyframes ripplePulse {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(38);
+        opacity: 0;
+      }
+    }
+
+    /* Smartphone Screen & Bezel (.media-wrapper) */
     .media-wrapper {
       position: relative;
       left: 0;
@@ -622,10 +690,21 @@
       right: 0;
       bottom: auto;
       width: 100%;
-      height: 58%;
+      height: 52%;
       overflow: hidden;
-      background: #060609;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #050508;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 2.25rem 2.25rem 0 0;
+    }
+
+    /* Realistic Screen Glass Specular Reflection Sheen */
+    .phone-glass-glare {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.03) 24%, transparent 52%, rgba(255, 255, 255, 0.02) 80%, transparent 100%);
+      pointer-events: none;
+      z-index: 10;
+      border-radius: inherit;
     }
 
     .full-image {
@@ -638,57 +717,28 @@
     }
 
     .scroll-card:hover .full-image {
-      transform: scale(1.045);
+      transform: scale(1.04);
     }
 
     .launch-hover-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(9, 9, 12, 0.55);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 350ms cubic-bezier(0.165, 0.84, 0.44, 1);
-      z-index: 5;
-    }
-
-    .scroll-card:hover .launch-hover-overlay {
-      opacity: 1;
+      display: none !important;
     }
 
     .launch-btn-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      background: var(--accent-red);
-      color: #ffffff;
-      font-family: var(--font-heading);
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      padding: 0.55rem 1.2rem;
-      border-radius: 999px;
-      box-shadow: 0 10px 25px rgba(255, 51, 51, 0.45);
-      transform: translateY(8px);
-      transition: transform 400ms cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .scroll-card:hover .launch-btn-pill {
-      transform: translateY(0);
+      display: none !important;
     }
 
     /* Webflow .content-wrapper & .grow-background (Bottom-Up 0% -> 100% Fill) */
     .content-wrapper {
       position: relative;
       width: 100%;
-      padding: 1.65rem 2.15rem 2.4rem;
+      padding: 1.35rem 1.85rem 1.45rem;
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
+      min-height: 0;
     }
 
     .grow-background {
@@ -718,72 +768,86 @@
       flex-direction: column;
       justify-content: space-between;
       height: 100%;
-      gap: 0.65rem;
+      gap: 0.55rem;
+      min-height: 0;
     }
 
     .card-bottom-info {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 1rem;
+      gap: 0.85rem;
     }
 
     .card-title-group {
       display: flex;
       align-items: flex-start;
-      gap: 1rem;
+      gap: 0.85rem;
+      min-width: 0;
+      flex: 1;
     }
 
     .card-number {
       font-family: var(--font-display);
-      font-size: 1.85rem;
+      font-size: 1.75rem;
       font-weight: 800;
       line-height: 1;
       color: var(--accent-red);
       letter-spacing: -0.02em;
+      flex-shrink: 0;
     }
 
     .card-headings-wrap {
       display: flex;
       flex-direction: column;
-      gap: 0.22rem;
+      gap: 0.2rem;
+      min-width: 0;
+      flex: 1;
     }
 
     .heading {
       margin: 0;
       font-family: var(--font-heading);
-      font-size: clamp(1.3rem, 1.7vw, 1.65rem);
+      font-size: clamp(1.15rem, 1.6vw, 1.45rem);
       font-weight: 800;
       letter-spacing: -0.025em;
       text-transform: uppercase;
       color: #ffffff;
-      line-height: 1.2;
+      line-height: 1.18;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     .card-category-text {
       font-family: var(--font-heading);
-      font-size: 0.74rem;
+      font-size: 0.68rem;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.55);
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      line-height: 1.35;
+      line-height: 1.32;
+      overflow-wrap: break-word;
     }
 
     .description {
       margin: 0;
-      opacity: 0.82;
+      opacity: 0.85;
       color: #e4e4e7;
       font-family: var(--font-body);
-      font-size: 0.92rem;
-      line-height: 1.52;
+      font-size: clamp(0.82rem, 0.95vw, 0.9rem);
+      line-height: 1.48;
       font-weight: 400;
       letter-spacing: -0.01em;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .card-arrow-circle {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: 1px solid rgba(255, 255, 255, 0.16);
       background: rgba(255, 255, 255, 0.05);
@@ -812,10 +876,11 @@
     .card-tags-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.45rem;
+      gap: 0.4rem;
       list-style: none;
       margin-top: auto;
       max-width: calc(100% - 95px);
+      padding: 0;
     }
 
     .card-partner-badge {
@@ -826,7 +891,7 @@
       background: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.4);
       border-radius: 10px;
-      padding: 0.35rem 0.55rem;
+      padding: 0.32rem 0.52rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -841,7 +906,7 @@
     }
 
     .card-partner-img {
-      height: 38px;
+      height: 36px;
       width: auto;
       object-fit: contain;
       display: block;
@@ -849,12 +914,12 @@
 
     .card-tag-badge {
       font-family: var(--font-heading);
-      font-size: 0.73rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.78);
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.11);
-      padding: 0.28rem 0.72rem;
+      padding: 0.25rem 0.68rem;
       border-radius: 6px;
       letter-spacing: 0.02em;
       transition: all 0.25s ease;
@@ -864,6 +929,23 @@
       border-color: rgba(255, 255, 255, 0.24);
       background: rgba(255, 255, 255, 0.1);
       color: #ffffff;
+    }
+
+    /* Phone Home Indicator Bar at Card Bottom */
+    .phone-home-indicator {
+      width: 120px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 999px;
+      margin: 0.45rem auto 0;
+      flex-shrink: 0;
+      pointer-events: none;
+      transition: width 0.25s ease, background-color 0.25s ease;
+    }
+
+    .scroll-card:hover .phone-home-indicator {
+      width: 140px;
+      background: rgba(255, 255, 255, 0.52);
     }
 
     /* ==========================================================================
@@ -935,22 +1017,24 @@
       }
       .hero-portrait-stage {
         align-items: flex-end;
-        padding-bottom: 6vh;
+        padding-bottom: 0;
+        justify-content: center;
+        overflow: hidden;
       }
       .portrait-image {
-        height: 68vh;
-        height: 68dvh;
-        max-height: 68dvh;
+        height: 86vh;
+        height: 86dvh;
+        max-height: 88dvh;
         width: auto;
-        max-width: 125vw;
-        transform: translateY(0);
-        mask-image: linear-gradient(to bottom, black 0%, black 76%, transparent 98%);
-        -webkit-mask-image: linear-gradient(to bottom, black 0%, black 76%, transparent 98%);
+        max-width: none;
+        transform: translateX(2.15%);
+        mask-image: linear-gradient(to bottom, black 0%, black 84%, transparent 98%);
+        -webkit-mask-image: linear-gradient(to bottom, black 0%, black 84%, transparent 98%);
       }
 
       /* Section 02: Keep Sticky Horizontal Center-Stage 01 -> 02 -> 03 on Tablet & Mobile */
       .sticky-container {
-        height: 270vh;
+        height: 260vh;
       }
       .sticky-wrap {
         position: -webkit-sticky;
@@ -976,25 +1060,27 @@
         display: none;
       }
       .scroll-inner {
-        padding-top: 3.6rem;
+        padding-top: 3.4rem;
       }
       .scroll-card {
         width: 72vw;
         min-width: 310px;
-        max-width: 480px;
-        height: 68vh;
-        height: 68dvh;
-        min-height: 410px;
-        max-height: 560px;
+        max-width: 460px;
+        height: 70vh;
+        height: 70dvh;
+        min-height: 440px;
+        max-height: 580px;
         margin-right: 1rem;
         margin-left: 1rem;
-        border-radius: 1.5rem;
+        border-radius: 2rem;
       }
       .media-wrapper {
-        height: 48%;
+        height: 44%;
+        border-radius: 1.85rem 1.85rem 0 0;
       }
       .content-wrapper {
-        padding: 1.25rem 1.4rem 1.5rem;
+        padding: 1.15rem 1.35rem 1.35rem;
+        gap: 0.5rem;
       }
     }
 
@@ -1022,14 +1108,17 @@
         display: none;
       }
       .portrait-image {
-        height: 67vh;
-        height: 67dvh;
-        max-height: 67dvh;
+        height: 86vh;
+        height: 86dvh;
+        max-height: 88dvh;
         width: auto;
-        max-width: 130vw;
+        max-width: none;
+        transform: translateX(2.15%);
       }
       .hero-portrait-stage {
-        padding-bottom: 6vh;
+        padding-bottom: 0;
+        justify-content: center;
+        overflow: hidden;
       }
       .title-line-1,
       .title-line-2 {
@@ -1064,54 +1153,65 @@
       }
       .scroll-card {
         width: 86vw;
-        min-width: 280px;
-        max-width: 370px;
-        height: 67vh;
-        height: 67dvh;
-        min-height: 390px;
-        max-height: 510px;
+        min-width: 290px;
+        max-width: 380px;
+        height: 70vh;
+        height: 70dvh;
+        min-height: 440px;
+        max-height: 560px;
         margin-right: 0.75rem;
         margin-left: 0.75rem;
-        border-radius: 1.35rem;
+        border-radius: 1.85rem;
       }
       .media-wrapper {
-        height: 44%;
+        height: 40%;
+        border-radius: 1.75rem 1.75rem 0 0;
+      }
+      .phone-home-indicator {
+        width: 90px;
+        height: 3px;
+        margin: 0.3rem auto 0;
       }
       .content-wrapper {
-        padding: 1.05rem 1.15rem 1.25rem;
+        padding: 0.95rem 1.15rem 1.15rem;
+        gap: 0.45rem;
       }
       .card-partner-badge {
-        right: 1.15rem;
-        bottom: 1.15rem;
-        padding: 0.25rem 0.45rem;
-        border-radius: 8px;
+        right: 0.95rem;
+        bottom: 0.95rem;
+        padding: 0.22rem 0.42rem;
+        border-radius: 7px;
       }
       .card-partner-img {
-        height: 32px;
+        height: 28px;
       }
       .card-tags-list {
         max-width: calc(100% - 75px);
+        gap: 0.32rem;
       }
       .card-number {
-        font-size: 1.45rem;
+        font-size: 1.35rem;
       }
       .heading {
-        font-size: 1.12rem;
+        font-size: 1.05rem;
+        line-height: 1.16;
       }
       .card-category-text {
-        font-size: 0.64rem;
+        font-size: 0.62rem;
+        line-height: 1.25;
       }
       .card-arrow-circle {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
       }
       .description {
-        font-size: 0.8rem;
-        line-height: 1.45;
+        font-size: 0.78rem;
+        line-height: 1.4;
+        -webkit-line-clamp: 2;
       }
       .card-tag-badge {
-        font-size: 0.65rem;
-        padding: 0.22rem 0.55rem;
+        font-size: 0.62rem;
+        padding: 0.2rem 0.5rem;
       }
       /* Section 03 & 04 Mobile Compact Polish */
       .section-academic {
@@ -1563,6 +1663,83 @@
       line-height: 1.7;
     }
 
+    .edu-faculty {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .edu-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.15rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .edu-tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.32rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(255, 51, 51, 0.08);
+      border: 1px solid rgba(255, 51, 51, 0.28);
+      color: #ff9999;
+    }
+
+    .edu-tag-badge.badge-neutral {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #d1d5db;
+    }
+
+    .edu-focus-card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.85rem 1.1rem;
+    }
+
+    .edu-focus-header {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--accent-red);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .edu-focus-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .edu-focus-list li {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      display: flex;
+      align-items: baseline;
+      gap: 0.45rem;
+    }
+
+    .edu-focus-list li strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
     .lang-item {
       margin-bottom: 1.6rem;
     }
@@ -1836,13 +2013,10 @@
       <!-- Main Hero: 3-Column Content -->
       <div class="hero-content-stage">
         
-        <!-- Column 1 (Left): IT & DATA MANAGEMENT at bottom-left -->
+        <!-- Column 1 (Left): RESUME at bottom-left -->
         <div class="hero-left-col">
-          <div class="title-line-1">
-            IT &amp; DATA
-          </div>
-          <div class="title-line-2">
-            MANAGEMENT
+          <div class="title-line-1" style="font-size: clamp(3.6rem, 6.8vw, 6.2rem); letter-spacing: -0.03em;">
+            RESUME
           </div>
         </div>
 
@@ -1904,17 +2078,12 @@
       <div id="projects-scroll-inner" class="scroll-inner">
 
         <!-- CARD 01: LARB RAEK PHOB TICKETS -->
-        <a href="https://github.com/nonHine/larb-raek-phob-tickets" target="_blank" rel="noopener noreferrer" class="scroll-card is-active-center" data-card-index="0" title="เปิดดูซอร์สโค้ดและรายละเอียดระบบจำหน่ายบัตรคอนเสิร์ตและตรวจสลิป AI บน GitHub">
+        <a href="https://github.com/nonHine/larb-raek-phob-tickets" target="_blank" rel="noopener noreferrer" class="scroll-card phone-mockup is-active-center" data-card-index="0" title="เปิดดูซอร์สโค้ดและรายละเอียดระบบจำหน่ายบัตรคอนเสิร์ตและตรวจสลิป AI บน GitHub">
           <div class="media-wrapper" style="background: radial-gradient(circle at 50% 50%, #1f1214 0%, #050507 100%); display: flex; align-items: center; justify-content: center;">
+            <!-- Glass Specular Reflection Sheen -->
+            <div class="phone-glass-glare" aria-hidden="true"></div>
+
             <img src="assets/larb-logo.jpg" alt="LOGO ลาบก้อย ซอยนานา" class="full-image" style="object-fit: contain; padding: 1.25rem;" />
-            <div class="launch-hover-overlay">
-              <span class="launch-btn-pill">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                VIEW PROJECT REPO
-              </span>
-            </div>
           </div>
           <div class="content-wrapper">
             <div class="text-wrapper">
@@ -1923,7 +2092,7 @@
                   <span class="card-number">01</span>
                   <div class="card-headings-wrap">
                     <h3 class="heading">LARB RAEK PHOB TICKETS.</h3>
-                    <span class="card-category-text">LEAD FULL-STACK &amp; AI SYSTEM DEVELOPER · EVENT TICKETING</span>
+                    <span class="card-category-text">LEAD FULL-STACK &amp; AI DEVELOPER · EVENT TICKETING</span>
                   </div>
                 </div>
                 <div class="card-arrow-circle">
@@ -1934,7 +2103,7 @@
                 </div>
               </div>
               <p class="description">
-                ระบบจองบัตรคอนเสิร์ตและตรวจสลิปโอนเงินอัตโนมัติด้วย AI OCR &amp; PromptPay QR แบบ Real-time ลดเวลาตรวจสอบหน้างานและป้องกันสลิปซ้ำ 100%
+                ระบบจองบัตรคอนเสิร์ตและตรวจสลิปโอนเงินอัตโนมัติด้วย AI OCR &amp; PromptPay QR แบบ Real-time ป้องกันสลิปซ้ำ 100%
               </p>
               <ul class="card-tags-list">
                 <li class="card-tag-badge">Next.js</li>
@@ -1948,22 +2117,19 @@
                 <img src="assets/kkbs-logo.png" alt="คณะบริหารธุรกิจและการบัญชี มหาวิทยาลัยขอนแก่น (Khon Kaen Business School)" class="card-partner-img" />
               </div>
             </div>
+            <!-- Phone Home Indicator Bar -->
+            <div class="phone-home-indicator" aria-hidden="true"></div>
             <div class="grow-background"></div>
           </div>
         </a>
 
         <!-- CARD 02: ROADMAP.STUDIO -->
-        <a href="apps/roadmap-studio/mock-exam-simulator.html" target="_blank" rel="noopener noreferrer" class="scroll-card" data-card-index="1" title="เปิดใช้งานเว็บจำลองสอบเสมือนจริง 100 ข้อ (Interactive Exam Simulator)">
+        <a href="apps/roadmap-studio/mock-exam-simulator.html" target="_blank" rel="noopener noreferrer" class="scroll-card phone-mockup" data-card-index="1" title="เปิดใช้งานเว็บจำลองสอบเสมือนจริง 100 ข้อ (Interactive Exam Simulator)">
           <div class="media-wrapper">
+            <!-- Glass Specular Reflection Sheen -->
+            <div class="phone-glass-glare" aria-hidden="true"></div>
+
             <img src="assets/roadmap-simulator-preview.png" alt="ENG1.PREP // FINAL EXAM SIMULATOR - ROADMAP.STUDIO" class="full-image" style="object-position: top center;" />
-            <div class="launch-hover-overlay">
-              <span class="launch-btn-pill">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                LAUNCH WEB APP
-              </span>
-            </div>
           </div>
           <div class="content-wrapper">
             <div class="text-wrapper">
@@ -1972,7 +2138,7 @@
                   <span class="card-number">02</span>
                   <div class="card-headings-wrap">
                     <h3 class="heading">ROADMAP.STUDIO.</h3>
-                    <span class="card-category-text">INTERACTIVE LEARNING WEB DEVELOPER · CEFR B2 EDTECH HUB</span>
+                    <span class="card-category-text">INTERACTIVE LEARNING DEV · CEFR B2 EDTECH HUB</span>
                   </div>
                 </div>
                 <div class="card-arrow-circle">
@@ -1983,32 +2149,29 @@
                 </div>
               </div>
               <p class="description">
-                ศูนย์การเรียนรู้และระบบจำลองการสอบ Interactive 100 ข้อ รองรับ Offline-Ready 100% ร่วมกับ Web Audio API คะแนน Lighthouse Performance &gt; 95
+                ศูนย์การเรียนรู้และระบบจำลองข้อสอบ Interactive 100 ข้อ รองรับ Offline-Ready 100% ร่วมกับ Web Audio API Lighthouse Performance &gt; 95
               </p>
               <ul class="card-tags-list">
                 <li class="card-tag-badge">JavaScript ES6+</li>
-                <li class="card-tag-badge">Offline-Ready PWA</li>
-                <li class="card-tag-badge">Web Audio API</li>
+                <li class="card-tag-badge">Offline PWA</li>
+                <li class="card-tag-badge">Web Audio</li>
                 <li class="card-tag-badge">CEFR B2 Hub</li>
                 <li class="card-tag-badge">100 Dynamic Exams</li>
               </ul>
             </div>
+            <!-- Phone Home Indicator Bar -->
+            <div class="phone-home-indicator" aria-hidden="true"></div>
             <div class="grow-background"></div>
           </div>
         </a>
 
         <!-- CARD 03: CLAWD & THE STAR SEED -->
-        <div id="open-animation-card" class="scroll-card card-gold" data-card-index="2" title="คลิกเพื่อเปิดเครื่องเล่นวิดีโอแอนิเมชันความยาว 60 วินาที">
+        <div id="open-animation-card" class="scroll-card card-gold phone-mockup" data-card-index="2" title="คลิกเพื่อเปิดเครื่องเล่นวิดีโอแอนิเมชันความยาว 60 วินาที">
           <div class="media-wrapper">
+            <!-- Glass Specular Reflection Sheen -->
+            <div class="phone-glass-glare" aria-hidden="true"></div>
+
             <img src="assets/claude_animation_preview.jpg" alt="Clawd & The Star Seed - 60s Hand-Painted Cartoon Animation" class="full-image" />
-            <div class="launch-hover-overlay">
-              <span class="launch-btn-pill" style="background: #f59e0b; color: #09090b; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.5);">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                PLAY 60S ANIMATION VIDEO
-              </span>
-            </div>
           </div>
           <div class="content-wrapper">
             <div class="text-wrapper">
@@ -2017,7 +2180,7 @@
                   <span class="card-number" style="color: #f59e0b;">03</span>
                   <div class="card-headings-wrap">
                     <h3 class="heading">CLAWD &amp; THE STAR SEED.</h3>
-                    <span class="card-category-text">CREATIVE CODING · 60S HAND-PAINTED WATERCOLOR ANIMATION</span>
+                    <span class="card-category-text">CREATIVE CODING · 60S WATERCOLOR SHORT FILM</span>
                   </div>
                 </div>
                 <div class="card-arrow-circle" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
@@ -2027,16 +2190,18 @@
                 </div>
               </div>
               <p class="description">
-                ภาพยนตร์แอนิเมชันสั้นวาดด้วยพู่กันสีน้ำ 60 วินาทีเต็ม สร้างด้วยโค้ด p5.brush + Node CLI พร้อมเพลงประกอบสังเคราะห์ 84 BPM เรนเดอร์คมชัด 60 FPS
+                ภาพยนตร์แอนิเมชันสั้นวาดด้วยพู่กันสีน้ำ 60 วินาทีเต็ม สร้างด้วยโค้ด p5.brush + Node CLI พร้อมเพลงประกอบสังเคราะห์ 84 BPM เรนเดอร์ 60 FPS
               </p>
               <ul class="card-tags-list">
-                <li class="card-tag-badge">p5.js / p5.brush</li>
+                <li class="card-tag-badge">p5.brush</li>
                 <li class="card-tag-badge">Chromium Render</li>
                 <li class="card-tag-badge">Python Synth BGM</li>
-                <li class="card-tag-badge">60s Animated Short</li>
+                <li class="card-tag-badge">60s Short Film</li>
                 <li class="card-tag-badge">60 FPS / 84 BPM</li>
               </ul>
             </div>
+            <!-- Phone Home Indicator Bar -->
+            <div class="phone-home-indicator" aria-hidden="true"></div>
             <div class="grow-background"></div>
           </div>
         </div>
@@ -2086,15 +2251,44 @@
 
             <!-- Education Details Column with Red Accent Bar -->
             <div class="edu-details-col">
-              <div class="edu-title">ปริญญาตรี คณะมนุษยศาสตร์และสังคมศาสตร์</div>
+              <div class="edu-title">มหาวิทยาลัยขอนแก่น (Khon Kaen University)</div>
               <div class="edu-field">
-                สาขาวิชาสารสนเทศศาสตร์ (Information Science)
+                หลักสูตรสารสนเทศศาสตรบัณฑิต (ศศ.บ.) สาขาวิชาสารสนเทศศาสตร์
               </div>
-              <div class="edu-subtitle">
-                มหาวิทยาลัยขอนแก่น (Khon Kaen University)<br>
-                เข้าศึกษาผ่านรอบ Portfolio | นักศึกษาชั้นปีที่ 1 ปีการศึกษา 2569
+              <div class="edu-faculty">
+                คณะมนุษยศาสตร์และสังคมศาสตร์
               </div>
             </div>
+          </div>
+
+          <!-- Admission & Status Tags -->
+          <div class="edu-tags-row">
+            <span class="edu-tag-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              คัดเลือกรอบ Portfolio
+            </span>
+            <span class="edu-tag-badge badge-neutral">นักศึกษาชั้นปีที่ 1 (ปีการศึกษา 2569)</span>
+          </div>
+
+          <!-- Focus & Curation Box -->
+          <div class="edu-focus-card">
+            <div class="edu-focus-header">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              <span>จุดเน้นด้านสารสนเทศและระบบข้อมูล (CORE FOCUS &amp; CURATION)</span>
+            </div>
+            <ul class="edu-focus-list">
+              <li>
+                <span style="color: var(--accent-red);">▹</span>
+                <span><strong>Data Systems &amp; Management:</strong> โครงสร้างสารสนเทศ, การจัดการฐานข้อมูล และ AI Automations</span>
+              </li>
+              <li>
+                <span style="color: #60a5fa;">▹</span>
+                <span><strong>Digital Curation &amp; Web:</strong> การสังเคราะห์จัดระเบียบสารสนเทศดิจิทัล และสร้างเว็บแอปพลิเคชัน</span>
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -2119,6 +2313,18 @@
               <div class="lang-fill" style="width: 80%;"></div>
             </div>
             <div class="lang-desc">ฟัง, พูด, อ่าน, เขียน คล่องแคล่วสำหรับงาน Technical &amp; Data Documentation</div>
+          </div>
+
+          <!-- Chinese -->
+          <div class="lang-item">
+            <div class="lang-header">
+              <strong>CHINESE (ศิลป์ภาษา อังกฤษ-จีน)</strong>
+              <span style="color: #60a5fa;">60% [■ ■ ■ □ □]</span>
+            </div>
+            <div class="lang-bar">
+              <div class="lang-fill" style="width: 60%; background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);"></div>
+            </div>
+            <div class="lang-desc">ระดับพื้นฐานจากการเรียนแผนการเรียน ศิลป์ภาษา อังกฤษ-จีน</div>
           </div>
 
           <!-- Thai -->
@@ -2254,10 +2460,10 @@
           o: "m 139 0 l 139 972 l 251 972 l 251 546 l 768 546 l 768 972 l 881 972 l 881 0 l 768 0 l 768 443 l 251 443 l 251 0 l 139 0 z "
         },
         "I": {
-          ha: 651,
-          x_min: 125,
-          x_max: 526,
-          o: "m 125 0 l 125 97 l 269 97 l 269 875 l 125 875 l 125 972 l 526 972 l 526 875 l 382 875 l 382 97 l 526 97 l 526 0 l 125 0 z "
+          ha: 398,
+          x_min: 139,
+          x_max: 259,
+          o: "m 139 0 l 139 972 l 259 972 l 259 0 l 139 0 z "
         },
         "N": {
           ha: 1021,
@@ -2285,17 +2491,33 @@
        ===================================================== */
     function createProceduralParticleTexture() {
       const c = document.createElement("canvas");
-      c.width = 64;
-      c.height = 64;
+      c.width = 128;
+      c.height = 128;
       const ctx = c.getContext("2d");
-      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-      g.addColorStop(0, "rgba(255,255,255,1)");
-      g.addColorStop(0.3, "rgba(255,255,255,0.9)");
-      g.addColorStop(0.65, "rgba(255,255,255,0.3)");
-      g.addColorStop(1, "rgba(255,255,255,0)");
+      const center = 64;
+      const maxRadius = 58; // 6px padding guarantees zero square edge clipping
+
+      const g = ctx.createRadialGradient(center, center, 0, center, center, maxRadius);
+      // High-precision luminous radial profile:
+      // Brilliant diamond-white hot core
+      g.addColorStop(0.00, "rgba(255, 255, 255, 1.0)");
+      g.addColorStop(0.14, "rgba(255, 255, 255, 1.0)");
+      g.addColorStop(0.32, "rgba(255, 250, 245, 0.90)");
+      // Soft ethereal corona with warm solar glow
+      g.addColorStop(0.52, "rgba(255, 240, 220, 0.44)");
+      g.addColorStop(0.72, "rgba(255, 205, 180, 0.15)");
+      // Feathered atmospheric falloff
+      g.addColorStop(0.88, "rgba(255, 160, 140, 0.03)");
+      g.addColorStop(1.00, "rgba(255, 160, 140, 0.0)");
+
       ctx.fillStyle = g;
-      ctx.fillRect(0, 0, 64, 64);
-      return new THREE.CanvasTexture(c);
+      ctx.fillRect(0, 0, 128, 128);
+
+      const texture = new THREE.CanvasTexture(c);
+      texture.generateMipmaps = true;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      return texture;
     }
 
     /* =====================================================
@@ -2311,27 +2533,113 @@
 
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2(-200, 200);
-        this.colorChange = new THREE.Color();
+        // Infinite mathematical plane at z=0 eliminates any raycast boundary drop or polygon precision loss
+        this.groundPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+        this.hitPoint = new THREE.Vector3();
+        this.isPointerActive = false;
         this.buttom = false; // Hold state
+        this.canvasRect = null;
+        this.touchResetTimer = null;
         window.debugParticlesInstance = this;
-
-        const visW = this.visibleWidthAtZDepth(0, this.camera);
-        // Computed responsive text size (fills nicely behind portrait on both desktop and mobile)
-        const computedTextSize = Math.min(42, Math.max(15, Math.floor(visW * 0.21)));
-        const isMobileViewport = window.innerWidth <= 1024;
 
         this.data = {
           text: "HINE",
           textColor: 0xffffff,
-          particleSize: isMobileViewport ? 1.15 : 1.25,
-          textSize: computedTextSize,
-          yOffset: isMobileViewport ? 4 : 0,
-          area: isMobileViewport ? 190 : 260, // Hover/touch radius
-          ease: 0.05,
+          particleSize: 1.45,
+          textSize: 48,
+          yOffset: 0,
+          area: 8.8, // Measured in Three.js world units (tight, crisp, localized hover circle)
+          defaultArea: 8.8,
+          ease: 0.075,
         };
 
+        this.recalculateSize();
         this.setup();
         this.bindEvents();
+      }
+
+      updateCanvasRect() {
+        if (this.renderer && this.renderer.domElement) {
+          this.canvasRect = this.renderer.domElement.getBoundingClientRect();
+        }
+      }
+
+      updatePointerCoords(event) {
+        if (!this.renderer || !this.renderer.domElement) return false;
+        // Always query fresh bounding client rect dynamically to prevent any scroll, zoom, or layout offset drift
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.canvasRect = rect;
+        if (rect.width === 0 || rect.height === 0) return false;
+
+        let clientX = event.clientX;
+        let clientY = event.clientY;
+
+        if (event.touches && event.touches.length > 0) {
+          clientX = event.touches[0].clientX;
+          clientY = event.touches[0].clientY;
+        } else if (event.changedTouches && event.changedTouches.length > 0) {
+          clientX = event.changedTouches[0].clientX;
+          clientY = event.changedTouches[0].clientY;
+        }
+
+        if (clientX === undefined || clientY === undefined) return false;
+
+        // Check if pointer is within or reasonably close to hero canvas bounds
+        const pad = 40;
+        if (
+          clientX < rect.left - pad ||
+          clientX > rect.right + pad ||
+          clientY < rect.top - pad ||
+          clientY > rect.bottom + pad
+        ) {
+          return false;
+        }
+
+        // Exact 1:1 NDC coordinate calculation relative to active canvas viewport bounds
+        this.mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+        this.isPointerActive = true;
+        return true;
+      }
+
+      recalculateSize() {
+        const visW = this.visibleWidthAtZDepth(0, this.camera);
+        const isMobile = window.innerWidth <= 768;
+        const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+
+        let computedTextSize;
+        let yOffset;
+        let particleSize;
+        let area;
+
+        if (isMobile) {
+          // Mobile: Expands to ~85% of screen width, elevated at chest/shoulder height
+          computedTextSize = Math.max(13, Number((visW * 0.282).toFixed(2)));
+          yOffset = 10;
+          particleSize = 1.25;
+          // Mobile ~2.0x enlarged hover circle: ~6.0 - 6.8 world units (~42-46px radius / 84-92px diameter)
+          area = Math.max(5.8, Math.min(7.2, Number((visW * 0.104).toFixed(1))));
+        } else if (isTablet) {
+          // Tablet: ~84% of screen width
+          computedTextSize = Number(Math.min(46, Math.max(22, visW * 0.278)).toFixed(2));
+          yOffset = 5;
+          particleSize = 1.35;
+          // Tablet ~2.0x enlarged hover circle: ~10.5 - 12.8 world units
+          area = Math.max(10.0, Math.min(12.8, Number((visW * 0.092).toFixed(1))));
+        } else {
+          // Desktop: Grand 84-86% span across the stage behind portrait
+          computedTextSize = Number(Math.min(68, Math.max(32, visW * 0.28)).toFixed(2));
+          yOffset = 0;
+          particleSize = 1.45;
+          // Desktop ~2.0x enlarged hover circle: ~16.0 - 19.5 world units (~140-165px radius)
+          area = Math.max(16.0, Math.min(19.5, Number((visW * 0.084).toFixed(1))));
+        }
+
+        this.data.textSize = computedTextSize;
+        this.data.yOffset = yOffset;
+        this.data.particleSize = particleSize;
+        this.data.area = area;
+        this.data.defaultArea = area;
       }
 
       setup() {
@@ -2348,33 +2656,60 @@
       }
 
       bindEvents() {
+        const isInteractiveTarget = (e) => {
+          return e.target && e.target.closest && e.target.closest(
+            "button, a, .nav-resume-btn, .scroll-card, .sticky-container, .anim-modal-backdrop, video, input, select"
+          );
+        };
+
         const onDown = (e) => {
-          if (e.target && e.target.closest && e.target.closest("button, a, .scroll-card, .sticky-container, .anim-modal-backdrop")) return;
+          if (isInteractiveTarget(e)) return;
+          if (this.touchResetTimer) {
+            clearTimeout(this.touchResetTimer);
+            this.touchResetTimer = null;
+          }
           this.onMouseDown(e);
         };
+
         const onMove = (e) => {
           this.onMouseMove(e);
         };
-        const onUp = () => this.onMouseUp();
 
-        // Listen on window so dragging anywhere over the viewport interacts with particles
-        window.addEventListener("pointerdown", onDown);
-        window.addEventListener("pointermove", onMove);
-        window.addEventListener("pointerup", onUp);
-        window.addEventListener("pointercancel", onUp);
+        const onUp = (e) => {
+          this.onMouseUp();
+          // On touch release, smooth release window allows particles to bloom and return naturally
+          if (e && (e.pointerType === "touch" || e.touches !== undefined)) {
+            if (this.touchResetTimer) clearTimeout(this.touchResetTimer);
+            this.touchResetTimer = setTimeout(() => {
+              this.isPointerActive = false;
+              this.mouse.set(-200, 200);
+              this.touchResetTimer = null;
+            }, 180);
+          }
+        };
 
-        window.addEventListener("mousedown", onDown);
-        window.addEventListener("mousemove", onMove);
-        window.addEventListener("mouseup", onUp);
+        const onCancel = () => {
+          this.onMouseUp();
+          if (this.touchResetTimer) clearTimeout(this.touchResetTimer);
+          this.touchResetTimer = setTimeout(() => {
+            this.isPointerActive = false;
+            this.mouse.set(-200, 200);
+            this.touchResetTimer = null;
+          }, 180);
+        };
 
-        window.addEventListener("touchstart", (e) => {
-          if (e.touches && e.touches.length > 0) onDown(e.touches[0]);
-        }, { passive: true });
-        window.addEventListener("touchmove", (e) => {
-          if (e.touches && e.touches.length > 0) onMove(e.touches[0]);
-        }, { passive: true });
-        window.addEventListener("touchend", onUp);
-        window.addEventListener("mouseleave", onUp);
+        // Unified Pointer & Touch listeners: ensures 100% compatibility across all browsers, synthetic touches, and mobile devices
+        window.addEventListener("pointerdown", onDown, { passive: true });
+        window.addEventListener("pointermove", onMove, { passive: true });
+        window.addEventListener("pointerup", onUp, { passive: true });
+        window.addEventListener("pointercancel", onCancel, { passive: true });
+
+        window.addEventListener("touchstart", onDown, { passive: true });
+        window.addEventListener("touchmove", onMove, { passive: true });
+        window.addEventListener("touchend", onCancel, { passive: true });
+        window.addEventListener("touchcancel", onCancel, { passive: true });
+
+        window.addEventListener("mouseleave", onCancel, { passive: true });
       }
 
       onWindowResize() {
@@ -2385,111 +2720,279 @@
             this.visibleHeightAtZDepth(0, this.camera)
           );
         }
+
+        const oldSize = this.data.textSize;
+        this.recalculateSize();
+        if (Math.abs(oldSize - this.data.textSize) > 0.2) {
+          if (this.particles) {
+            this.scene.remove(this.particles);
+            if (this.particles.geometry) this.particles.geometry.dispose();
+          }
+          this.createText();
+        }
       }
 
       onMouseDown(event) {
-        const rect = this.renderer.domElement.getBoundingClientRect();
-        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-        // Shockwave explosion: Expand blast radius & reduce damping
+        if (!this.updatePointerCoords(event)) return;
+        // Hold-press gravitational vortex suction field: expansive ~1.35x of enlarged hover circle (~2.0x original)
         this.buttom = true;
-        this.data.area = 680;
-        this.data.ease = 0.012;
+        this.data.area = Number((this.data.defaultArea * 1.35).toFixed(2));
       }
 
       onMouseUp() {
         this.buttom = false;
-        this.data.area = 260;
-        this.data.ease = 0.055;
+        this.data.area = this.data.defaultArea;
       }
 
       onMouseMove(event) {
-        const rect = this.renderer.domElement.getBoundingClientRect();
-        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        if (!this.updatePointerCoords(event)) {
+          this.isPointerActive = false;
+        }
       }
 
       render() {
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObject(this.planeArea);
+        if (!this.particles) return;
 
-        if (intersects.length > 0) {
-          const pos = this.particles.geometry.attributes.position;
-          const copy = this.geometryCopy.attributes.position;
-          const colors = this.particles.geometry.attributes.customColor;
-          const size = this.particles.geometry.attributes.size;
+        const time = performance.now() * 0.0024;
+        let hasHit = false;
+        let mx = 0;
+        let my = 0;
 
-          const mx = intersects[0].point.x;
-          const my = intersects[0].point.y;
+        if (this.isPointerActive) {
+          this.raycaster.setFromCamera(this.mouse, this.camera);
+          // Pure ray-plane intersection against mathematical plane z=0 guarantees 1:1 cursor alignment
+          if (this.raycaster.ray.intersectPlane(this.groundPlane, this.hitPoint)) {
+            hasHit = true;
+            mx = this.hitPoint.x;
+            my = this.hitPoint.y;
+          }
+        }
 
-          for (let i = 0, l = pos.count; i < l; i++) {
-            const initX = copy.getX(i);
-            const initY = copy.getY(i);
-            const initZ = copy.getZ(i);
+        const posAttr = this.particles.geometry.attributes.position;
+        const colAttr = this.particles.geometry.attributes.customColor;
+        const sizeAttr = this.particles.geometry.attributes.size;
 
-            let px = pos.getX(i);
-            let py = pos.getY(i);
-            let pz = pos.getZ(i);
+        const posArr = posAttr.array;
+        const copyArr = this.geometryCopy.attributes.position.array;
+        const colArr = colAttr.array;
+        const sizeArr = sizeAttr.array;
+        const baseSizes = this.baseSizes;
+        const phases = this.phases;
+        const roles = this.roles;
 
-            // Default: Crisp Luminous White
-            this.colorChange.setHSL(0.5, 1.0, 1.0);
-            colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
-            size.array[i] = this.data.particleSize;
+        const count = posAttr.count;
+        const isHold = this.buttom;
+        const currentRadius = this.data.area;
+        const radiusSq = currentRadius * currentRadius;
+        const ease = isHold ? 0.058 : 0.075;
 
-            let dx = mx - px;
-            let dy = my - py;
-            let d = (dx = mx - px) * dx + (dy = my - py) * dy;
-            const mouseDistance = this.distance(mx, my, px, py);
-            const f = -this.data.area / d;
+        for (let i = 0; i < count; i++) {
+          const i3 = i * 3;
+          const initX = copyArr[i3];
+          const initY = copyArr[i3 + 1];
+          const initZ = copyArr[i3 + 2];
 
-            if (this.buttom) {
-              // Click & Hold Shockwave Blast
-              const t = Math.atan2(dy, dx);
-              px -= f * Math.cos(t);
-              py -= f * Math.sin(t);
+          let px = posArr[i3];
+          let py = posArr[i3 + 1];
+          let pz = posArr[i3 + 2];
 
-              const distFromHome = Math.hypot(px - initX, py - initY);
-              if (distFromHome > 10) {
-                // Fiery crimson sparks (#ff2200)
-                this.colorChange.setHSL(0.022, 1.0, 0.56);
-                size.array[i] = this.data.particleSize * 1.35;
-              } else {
-                this.colorChange.setHSL(0.5, 1.0, 1.0);
-                size.array[i] = this.data.particleSize * 1.05;
-              }
-              colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+          const phase = phases[i];
+          const role = roles[i];
+          const baseSz = baseSizes[i];
+
+          // 1. Continuous 3D Breathing Wave & Traveling Cyber-Crimson / Solar-Gold Shimmer
+          const waveAngle = initX * 0.052 - time * 1.45 + phase;
+          const sWave = Math.sin(waveAngle);
+          const cWave = Math.cos(waveAngle * 0.88);
+
+          let targetX = initX;
+          let targetY = initY + sWave * (role === 2 ? 2.2 : 0.55);
+          let targetZ = initZ + cWave * (role === 2 ? 4.5 : 1.4);
+
+          // Traveling dual-harmonic Cyber-Crimson & Solar Amber-Gold shimmer across the letters
+          const pulsePrimary = Math.sin(initX * 0.042 - time * 1.65 + (role === 1 ? 0.45 : 0.0));
+          const pulseHarmonic = Math.cos(initY * 0.068 + time * 1.10 + phase * 0.2);
+          const pulseWave = pulsePrimary * 0.70 + pulseHarmonic * 0.30; // -1.0 -> 1.0
+
+          let r = 1.0, g = 1.0, b = 1.0;
+          let sz = baseSz;
+
+          if (role === 2) {
+            // Full-screen Floating Cosmic Aura Embers in 3D orbit across top, middle, and bottom
+            targetX += Math.sin(time * 0.65 + phase * 2.0) * 2.2;
+            targetY += Math.cos(time * 0.85 + phase * 1.5) * 2.0;
+            targetZ += Math.sin(time * 0.75 + phase * 2.2) * 4.5;
+
+            const emberPhase = 0.5 + 0.5 * Math.sin(time * 2.4 + phase * 3.0);
+            r = 1.0;
+            // Diverse cosmic palette per ember based on phase:
+            const hueGroup = (phase * 10.0) % 3.0;
+            if (hueGroup < 1.0) {
+              // Cyber-Crimson glow (#ff1e42)
+              g = 0.10 + emberPhase * 0.25;
+              b = 0.15 + emberPhase * 0.15;
+            } else if (hueGroup < 2.0) {
+              // Solar Amber-Gold glow (#ffb700)
+              g = 0.65 + emberPhase * 0.25;
+              b = 0.05 + emberPhase * 0.10;
             } else {
-              // Hover dispersal
-              if (mouseDistance < this.data.area) {
-                const t = Math.atan2(dy, dx);
-                px += f * Math.cos(t);
-                py += f * Math.sin(t);
+              // Platinum Diamond White sparkle
+              g = 0.85 + emberPhase * 0.15;
+              b = 0.85 + emberPhase * 0.15;
+            }
+            sz = baseSz * (0.85 + emberPhase * 0.55);
+          } else if (role === 1) {
+            // Contour boundary particles: enhanced definition, diamond core with cyber-crimson & gold rim
+            const rimWave = 0.5 + 0.5 * pulseWave; // 0 -> 1
+            r = 1.0;
+            // Shimmers between brilliant diamond rose-gold and cyber-crimson accent
+            g = 0.72 + (1.0 - rimWave) * 0.26;
+            b = 0.78 + (1.0 - rimWave) * 0.20;
+            sz = baseSz * (1.05 + rimWave * 0.22);
+          } else {
+            // Interior infill particles: warm platinum-gold gradient base with dynamic cyber surge
+            const normY = Math.max(0.0, Math.min(1.0, (initY + 30) / 60)); // 0 at bottom, 1 at top
+            // Base luxury tone: top = platinum-white, bottom = subtle cyber-crimson warmth
+            let baseR = 1.0;
+            let baseG = 0.88 + normY * 0.10;
+            let baseB = 0.84 + normY * 0.14;
 
-                const distFromHome = Math.hypot(px - initX, py - initY);
-                if (distFromHome > 7) {
-                  this.colorChange.setHSL(0.022, 1.0, 0.56);
-                  size.array[i] = this.data.particleSize * 1.25;
-                } else {
-                  this.colorChange.setHSL(0.5, 1.0, 1.0);
-                  size.array[i] = this.data.particleSize * 1.1;
-                }
-                colors.setXYZ(i, this.colorChange.r, this.colorChange.g, this.colorChange.b);
+            if (pulseWave > 0.25) {
+              const intensity = (pulseWave - 0.25) / 0.75; // 0 -> 1
+              // Surges with rich Cyber-Crimson (#ff2244) and Solar Amber-Gold (#ffb700)
+              baseR = 1.0;
+              baseG = baseG - intensity * 0.42;
+              baseB = baseB - intensity * 0.62;
+              sz = baseSz * (1.0 + intensity * 0.28);
+            }
+            r = baseR;
+            g = baseG;
+            b = baseB;
+          }
+
+          // 2. Interactive Pointer / Touch Physics:
+          // Hover = Gentle Radial Dispersal (~2.0x enlarged circle)
+          // Hold = Gravitational Pull + Tangential Vortex Swirl Suction into Contact Point
+          if (hasHit) {
+            const dx = mx - px;
+            const dy = my - py;
+            const dSq = dx * dx + dy * dy + 0.0001;
+            const dist = Math.sqrt(dSq);
+
+            if (dSq < radiusSq) {
+              // Normalized distance: 0.0 at pointer center, 1.0 at outer boundary
+              const normDist = dist / currentRadius;
+              // Smooth cubic hermite falloff ensures 100% continuous, zero shockwave edge
+              const w = 1.0 - normDist;
+              const falloff = w * w * (3.0 - 2.0 * w);
+
+              const ux = dx / dist; // Unit vector towards contact point
+              const uy = dy / dist;
+
+              if (isHold) {
+                // Gravitational Vortex Suction:
+                // Soft-core damping prevents center singularity jitter when dist < 0.65
+                const coreDamp = Math.min(1.0, dist / 0.65);
+                const pullForce = 2.4 * falloff * coreDamp;
+                // Swirl peaks mid-radius for a graceful spiral galaxy effect
+                const swirlForce = 1.6 * falloff * (0.4 + 0.6 * (1.0 - normDist));
+                const tx = -uy; // Perpendicular tangent
+                const ty = ux;
+
+                // Suction: moves inward along ux, uy and swirls along tx, ty
+                px += (pullForce * ux + swirlForce * tx);
+                py += (pullForce * uy + swirlForce * ty);
+                // 3D gravity well depression towards contact point
+                pz -= 0.45 * falloff;
+              } else {
+                // Gentle Radial Dispersal (Hover):
+                // Pushes particles smoothly outward in a ~2.0x enlarged circular field
+                const pushForce = 1.25 * falloff;
+                px -= pushForce * ux;
+                py -= pushForce * uy;
+                pz += pushForce * 0.06;
               }
             }
 
-            // Spring return to home position
-            px += (initX - px) * this.data.ease;
-            py += (initY - py) * this.data.ease;
-            pz += (initZ - pz) * this.data.ease;
+            // Displacement calculation from animated target position
+            const dispX = px - targetX;
+            const dispY = py - targetY;
+            const dispSq = dispX * dispX + dispY * dispY;
+            const dispDist = Math.sqrt(dispSq);
 
-            pos.setXYZ(i, px, py, pz);
+            // Bounded displacement clamp:
+            // For hover, keeps particles bounded within clean dispersal ripple
+            // For hold, allows particles to spiral inward into the accretion core while preventing runaway escape
+            const maxDisp = isHold ? (currentRadius * 1.05) : (currentRadius * 0.52);
+            if (dispDist > maxDisp) {
+              const clampScale = maxDisp / dispDist;
+              px = targetX + dispX * clampScale;
+              py = targetY + dispY * clampScale;
+            }
+
+            // Interactive Sparks & Color Excitation:
+            if (isHold && dSq < radiusSq) {
+              // During Gravitational Vortex Suction:
+              // Particles swirling near core ignite into Brilliant Diamond White (#ffffff)
+              // Outer spiral arms flare with Solar Amber-Gold (#ffb700) and Cyber-Crimson (#ff1e42)
+              const proximity = 1.0 - Math.min(1.0, dist / currentRadius);
+              if (proximity > 0.60) {
+                const coreT = (proximity - 0.60) / 0.40;
+                r = 1.0;
+                g = 0.82 + coreT * 0.18;
+                b = 0.78 + coreT * 0.22;
+                sz = baseSz * (1.28 + coreT * 0.42);
+              } else if (proximity > 0.20) {
+                const midT = (proximity - 0.20) / 0.40;
+                r = 1.0;
+                g = 0.22 + midT * 0.58;
+                b = 0.06 + midT * 0.25;
+                sz = baseSz * (1.10 + midT * 0.25);
+              } else {
+                r = 1.0;
+                g = 0.15 + proximity * 0.35;
+                b = 0.06 + proximity * 0.12;
+              }
+            } else if (dispDist > 0.40) {
+              // Normal hover dispersal excitation
+              const heat = Math.min(1.0, (dispDist - 0.40) / (maxDisp * 0.85));
+              r = 1.0;
+              // Outer rim: Solar Amber-Gold (#ffb300). Mid: Cyber-Crimson (#ff2244). Peak: Radiant Diamond White.
+              if (heat > 0.70) {
+                const superHeat = (heat - 0.70) / 0.30;
+                g = 0.22 + superHeat * 0.78;
+                b = 0.22 + superHeat * 0.78;
+              } else {
+                g = 0.72 - heat * 0.50;
+                b = 0.05 + heat * 0.17;
+              }
+              sz = baseSz * (1.12 + heat * 0.45);
+            }
           }
 
-          pos.needsUpdate = true;
-          colors.needsUpdate = true;
-          size.needsUpdate = true;
+          // Strict Z-clamp to ensure zero perspective distortion
+          pz = Math.max(-3.5, Math.min(3.5, pz));
+
+          // 3. Elastic Spring Return to Animated Target
+          // Smooth return on release: ease = 0.052 during hold, 0.075 during release/hover
+          px += (targetX - px) * ease;
+          py += (targetY - py) * ease;
+          pz += (targetZ - pz) * ease;
+
+          posArr[i3] = px;
+          posArr[i3 + 1] = py;
+          posArr[i3 + 2] = pz;
+
+          colArr[i3] = r;
+          colArr[i3 + 1] = g;
+          colArr[i3 + 2] = b;
+
+          sizeArr[i] = sz;
         }
+
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        sizeAttr.needsUpdate = true;
       }
 
       createText() {
@@ -2498,13 +3001,15 @@
         let geometry = new THREE.ShapeGeometry(shapes);
         geometry.computeBoundingBox();
 
-        const xMid = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-        const yMid = -0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
+        const xMid = -(geometry.boundingBox.min.x + 0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x));
+        const yMid = -(geometry.boundingBox.min.y + 0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y));
         geometry.center();
         const yOffset = this.data.yOffset || 0;
         if (yOffset !== 0) {
           geometry.translate(0, yOffset, 0);
         }
+        geometry.computeBoundingBox();
+        const textBox = geometry.boundingBox;
 
         const posAttr = geometry.attributes.position;
         const indexAttr = geometry.index;
@@ -2528,9 +3033,11 @@
 
         let colors = [];
         let sizes = [];
+        let phases = [];
+        let roles = [];
 
-        // 1. Uniform Dense Interior Infill (~5,500 particles)
-        const TARGET_INTERIOR_POINTS = 5500;
+        // 1. Uniform Dense Interior Infill (~5,600 particles)
+        const TARGET_INTERIOR_POINTS = 5600;
         for (let t = 0; t < triCount; t++) {
           const i0 = indexAttr ? indexAttr.getX(t * 3) : t * 3;
           const i1 = indexAttr ? indexAttr.getX(t * 3 + 1) : t * 3 + 1;
@@ -2550,22 +3057,60 @@
             }
             const px = ax + r1 * (bx - ax) + r2 * (cx - ax);
             const py = ay + r1 * (by - ay) + r2 * (cy - ay);
+            const pz = (Math.random() - 0.5) * 1.5;
 
-            thePoints.push(new THREE.Vector3(px, py, 0));
+            thePoints.push(new THREE.Vector3(px, py, pz));
             colors.push(1.0, 1.0, 1.0);
-            sizes.push(this.data.particleSize * (0.85 + Math.random() * 0.35));
+            sizes.push(this.data.particleSize * (0.85 + Math.random() * 0.4));
+            phases.push(Math.random() * Math.PI * 2);
+            roles.push(0);
           }
         }
 
-        // 2. High-precision Outer Contour Boundary (~1,500 boundary particles)
+        // 2. High-Precision Glowing Contour Boundary (~1,600 boundary particles)
         shapes.forEach((shape) => {
-          const edgePts = shape.getSpacedPoints(250);
+          const edgePts = shape.getSpacedPoints(320);
           edgePts.forEach((pt) => {
-            thePoints.push(new THREE.Vector3(pt.x + xMid, pt.y + yMid + yOffset, 0));
+            thePoints.push(new THREE.Vector3(pt.x + xMid, pt.y + yMid + yOffset, 0.4));
             colors.push(1.0, 1.0, 1.0);
-            sizes.push(this.data.particleSize * 1.08);
+            sizes.push(this.data.particleSize * 1.22);
+            phases.push(Math.random() * Math.PI * 2);
+            roles.push(1);
           });
         });
+
+        // 3. Full-Viewport Floating Cyber-Crimson & Solar Gold Cosmic Aura Embers (~1,250 particles)
+        // Spans 100% of the screen height and width (top-to-bottom and edge-to-edge)
+        const fullVisW = this.visibleWidthAtZDepth(0, this.camera);
+        const fullVisH = this.visibleHeightAtZDepth(0, this.camera);
+        const isMobileScreen = window.innerWidth <= 768;
+        const AMBIENT_COUNT = isMobileScreen ? 700 : 1300;
+
+        for (let a = 0; a < AMBIENT_COUNT; a++) {
+          // Distribute across full screen width and height with slight 6% bleed over edges
+          const ax = (Math.random() - 0.5) * fullVisW * 1.06;
+          const ay = (Math.random() - 0.5) * fullVisH * 1.06;
+          const az = (Math.random() - 0.5) * 26.0; // Deep 3D atmospheric staging
+          thePoints.push(new THREE.Vector3(ax, ay, az));
+
+          // Palette: Cyber-Crimson (#ff1e42), Solar Amber-Gold (#ffb700), and Platinum Diamond
+          const pType = Math.random();
+          if (pType < 0.40) {
+            colors.push(1.0, 0.12, 0.26); // Cyber-Crimson
+          } else if (pType < 0.80) {
+            colors.push(1.0, 0.72, 0.05); // Solar Amber-Gold
+          } else {
+            colors.push(1.0, 0.95, 0.92); // Platinum Diamond
+          }
+
+          sizes.push(this.data.particleSize * (0.65 + Math.random() * 0.95));
+          phases.push(Math.random() * Math.PI * 2);
+          roles.push(2);
+        }
+
+        this.baseSizes = new Float32Array(sizes);
+        this.phases = new Float32Array(phases);
+        this.roles = new Uint8Array(roles);
 
         let geoParticles = new THREE.BufferGeometry().setFromPoints(thePoints);
         geoParticles.setAttribute("customColor", new THREE.Float32BufferAttribute(colors, 3));
@@ -2797,13 +3342,14 @@
       if (typeof Lenis === 'undefined') return;
 
       const lenis = new Lenis({
-        duration: 1.15,
+        duration: 0.95,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         orientation: 'vertical',
         gestureOrientation: 'vertical',
         smoothWheel: true,
         wheelMultiplier: 1.0,
-        touchMultiplier: 1.2,
+        touchMultiplier: 1.0,
+        smoothTouch: false, // Essential: retain native mobile touch inertia to prevent stutter
         infinite: false,
       });
 
@@ -2824,7 +3370,7 @@
         const targetElem = document.querySelector(targetId);
         if (targetElem) {
           e.preventDefault();
-          lenis.scrollTo(targetElem, { offset: 0, duration: 1.2 });
+          lenis.scrollTo(targetElem, { offset: 0, duration: 1.0 });
         }
       });
     })();
@@ -2844,28 +3390,31 @@
       let rafId = null;
       let initialized = false;
       let currentActiveIndex = 0;
-      let lastFrameTime = performance.now();
       let cardCenterTargets = [];
+      let cachedSectionTop = 0;
+      let cachedScrollableDist = 1;
 
-      // Cache exact translateX positions so we never trigger layout reflows during scroll frames
+      // Cache exact translateX positions & section bounds so we NEVER trigger layout reflows during scroll frames
       function cacheCardMetrics() {
         const viewportCenter = window.innerWidth / 2;
         cardCenterTargets = cards.map((card) => {
           const cardCenter = card.offsetLeft + card.offsetWidth / 2;
           return viewportCenter - cardCenter;
         });
+        const rect = stickySection.getBoundingClientRect();
+        cachedSectionTop = rect.top + (window.scrollY || window.pageYOffset || 0);
+        cachedScrollableDist = Math.max(1, stickySection.offsetHeight - window.innerHeight);
       }
 
       // Scroll page smoothly to center a specific project card (0, 1, or 2)
       function scrollToProjectCard(index) {
-        const scrollableDistance = stickySection.offsetHeight - window.innerHeight;
-        if (scrollableDistance <= 0) return;
+        cacheCardMetrics();
+        if (cachedScrollableDist <= 1) return;
         const targetProgressMap = [0.0, 0.5, 1.0];
         const targetProgress = targetProgressMap[index] ?? 0;
-        const sectionTop = stickySection.getBoundingClientRect().top + window.scrollY;
-        const targetScrollY = sectionTop + targetProgress * scrollableDistance;
+        const targetScrollY = cachedSectionTop + targetProgress * cachedScrollableDist;
         if (window.lenis) {
-          window.lenis.scrollTo(targetScrollY, { duration: 1.2 });
+          window.lenis.scrollTo(targetScrollY, { duration: 0.9 });
         } else {
           window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
         }
@@ -2906,8 +3455,33 @@
         });
       });
 
-      // Clicking an inactive side card smoothly glides it to the center first
+      // Interactive touch coordinates ripple & active tap feedback (เอฟเฟคสัมผัส)
       cards.forEach((card, idx) => {
+        let touchStartPos = { x: 0, y: 0, time: 0 };
+
+        card.addEventListener('pointerdown', (e) => {
+          touchStartPos = { x: e.clientX, y: e.clientY, time: performance.now() };
+        }, { passive: true });
+
+        card.addEventListener('pointerup', (e) => {
+          const dist = Math.hypot(e.clientX - touchStartPos.x, e.clientY - touchStartPos.y);
+          const duration = performance.now() - touchStartPos.time;
+          // Only trigger ripple if it was a genuine tap/click, not a scroll drag
+          if (dist < 10 && duration < 600) {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const ripple = document.createElement('span');
+            ripple.className = 'touch-ripple-effect';
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            card.appendChild(ripple);
+            setTimeout(() => {
+              if (ripple && ripple.parentNode) ripple.parentNode.removeChild(ripple);
+            }, 600);
+          }
+        });
+
         card.addEventListener('click', (e) => {
           if (idx !== currentActiveIndex) {
             e.preventDefault();
@@ -2917,42 +3491,20 @@
         }, true);
       });
 
-      function updateHorizontalScroll(now) {
+      function updateHorizontalScroll() {
         if (cardCenterTargets.length === 0) {
           cacheCardMetrics();
         }
 
-        const rect = stickySection.getBoundingClientRect();
-        const scrollableDistance = stickySection.offsetHeight - window.innerHeight;
-        if (scrollableDistance <= 0) {
-          rafId = null;
-          return;
-        }
-
-        const currentTime = typeof now === 'number' ? now : performance.now();
-        const dt = Math.min(0.05, Math.max(0.001, (currentTime - lastFrameTime) / 1000));
-        lastFrameTime = currentTime;
-
-        // Continuous 0 -> 1 scroll progress with zero artificial step plateaus
-        const rawProgress = -rect.top / scrollableDistance;
+        const scrollTop = window.scrollY || window.pageYOffset || 0;
+        const rawProgress = (scrollTop - cachedSectionTop) / cachedScrollableDist;
         const progress = Math.max(0, Math.min(1, rawProgress));
 
         const startX = cardCenterTargets[0] || 0;
         const endX = cardCenterTargets[cardCenterTargets.length - 1] || 0;
-        targetX = startX + (endX - startX) * progress;
-
-        if (!initialized) {
-          currentX = targetX;
-          setActiveCardState(0);
-          initialized = true;
-        } else {
-          // Frame-rate independent exponential damping (60Hz / 120Hz / 144Hz butter-smooth)
-          const alpha = 1 - Math.exp(-12 * dt);
-          currentX += (targetX - currentX) * alpha;
-          if (Math.abs(targetX - currentX) < 0.05) {
-            currentX = targetX;
-          }
-        }
+        
+        // Direct, locked synchronization: 100% synchronous with page scroll, zero lag or drift
+        currentX = startX + (endX - startX) * progress;
 
         scrollInner.style.transform = `translate3d(${currentX.toFixed(2)}px, 0px, 0px)`;
 
@@ -2970,29 +3522,28 @@
           const normDist = Math.min(1, distPx / spanPerCard);
           // Cosine bell curve: 1.0 at exact center, 0.0 at neighboring card position
           const focusFactor = 0.5 * (1 + Math.cos(Math.PI * normDist));
-          const scaleVal = 0.91 + 0.09 * focusFactor;
-          const opacityVal = 0.42 + 0.58 * focusFactor;
+          const scaleVal = (0.92 + 0.08 * focusFactor).toFixed(4);
+          const opacityVal = (0.45 + 0.55 * focusFactor).toFixed(3);
 
-          cards[i].style.setProperty('--card-scale', scaleVal.toFixed(4));
-          cards[i].style.opacity = opacityVal.toFixed(3);
+          // Direct GPU transform assignment (bypasses CSS custom property inheritance recalculation)
+          cards[i].style.transform = `translate3d(0px, 0px, 0px) scale3d(${scaleVal}, ${scaleVal}, 1)`;
+          cards[i].style.opacity = opacityVal;
         }
 
-        setActiveCardState(closestIdx);
+        if (currentActiveIndex !== closestIdx || !initialized) {
+          setActiveCardState(closestIdx);
+          initialized = true;
+        }
 
         if (progressBar) {
           progressBar.style.width = `${(progress * 100).toFixed(1)}%`;
         }
 
-        if (Math.abs(targetX - currentX) >= 0.05) {
-          rafId = requestAnimationFrame(updateHorizontalScroll);
-        } else {
-          rafId = null;
-        }
+        rafId = null;
       }
 
       function onScroll() {
         if (!rafId) {
-          lastFrameTime = performance.now();
           rafId = requestAnimationFrame(updateHorizontalScroll);
         }
       }
@@ -3006,9 +3557,13 @@
         initialized = false;
         onScroll();
       }, { passive: true });
+      window.addEventListener('load', () => {
+        cacheCardMetrics();
+        updateHorizontalScroll();
+      }, { passive: true });
 
       cacheCardMetrics();
-      updateHorizontalScroll(performance.now());
+      updateHorizontalScroll();
     })();
   </script>
 
@@ -3021,17 +3576,17 @@
       var baseStar = document.querySelector(".star");
       if (!baseStar) return;
 
-      var appearMin = 0.3;
-      var appearMax = 0.8;
+      var appearMin = 0.4;
+      var appearMax = 1.0;
 
-      var delayMin = 2;
-      var delayMax = 6;
+      var delayMin = 2.5;
+      var delayMax = 6.5;
 
-      var durationMin = 0.3;
-      var durationMax = 1;
+      var durationMin = 0.4;
+      var durationMax = 1.1;
 
-      var numAnimations = 50;
-      var numStars = 300;
+      var numAnimations = 12;
+      var numStars = 48;
 
       var stars = [];
       var eases = [];
