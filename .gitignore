@@ -13,3 +13,10 @@ update_*.mjs
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Unreferenced raw audio & local scratch directories
+assets/star_adventure_bgm.wav
+assets/star_adventure_bgm.mp3
+index_files/
+scripts/
+index_resume_a4.png

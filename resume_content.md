@@ -88,14 +88,14 @@
 
 ---
 
-### 03. AI for Editor & Motion Animation — Creative Video & AI Workflow Specialist
+### 03. CLAWD & THE STAR SEED — Creative Coding & Hand-Painted Animator
 - **ช่วงเวลา / ปี**: 2569
-- **ประเภท**: Creative Media Production, Motion Graphics & AI Pipelines
-- **เครื่องมือ & เทคโนโลยี**: CapCut, DaVinci Resolve, Motion Control AI, Prompt-to-Video, Audio Waveform Sync
+- **ประเภท**: Creative Coding, Hand-Painted Animation & Algorithmic Music
+- **เครื่องมือ & เทคโนโลยี**: p5.js, p5.brush, Python Synth BGM (84 BPM), Chromium 60fps, Node.js
 - **รายละเอียดและผลลัพธ์เชิงประจักษ์ (Action-Oriented Bullets & Impact)**:
-  - ประยุกต์ใช้ **CapCut** และ **DaVinci Resolve** ร่วมกับโมเดล Generative AI (Prompt-to-Video & Motion Control) ในการสร้างสรรค์โมชันกราฟิกและวิดีโอคอนเทนต์ระดับโปรดักชัน
-  - พัฒนา Automated AI Workflow สำหรับการวาง Storyboard, สร้าง Key Visuals และตัดต่อเสียง/ภาพเคลื่อนไหวแบบ Synchronization ช่วย**ลดระยะเวลาการผลิตสื่อลงกว่า 80%**
-  - สร้างสรรค์สื่อดิจิทัลและ Visual Assets ที่มีความคมชัดสูง ผสานการเล่าเรื่อง (Visual Storytelling) เพื่อเพิ่ม Engagement และการมีส่วนร่วมของผู้ชมอย่างมีประสิทธิภาพ
+  - สร้างภาพยนตร์แอนิเมชันสั้น 60 วินาทีเต็มด้วยโค้ดล้วน (Deterministic Creative Coding) ผ่าน **p5.js** และ **p5.brush** โดยไม่ใช้โมเดล Diffusion
+  - ออกแบบลายเส้น **Boiling Linework 12 fps** สไตล์การ์ตูนคลาสสิก พร้อมระบบสีน้ำพู่กันระบายสด (Watercolor Wash)
+  - ประพันธ์ดนตรีประกอบเปียโน & Celesta (84 BPM) ด้วย Python และเรนเดอร์ 1,440 เฟรมสู่ MP4 คมชัดระดับ 60 FPS เปิดให้รับชมได้โดยตรงในพอร์ตโฟลิโอ
 
 ---
 

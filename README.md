@@ -41,12 +41,12 @@
   - ออกแบบสถาปัตยกรรม **Offline-Ready 100%** ร่วมกับ **Web Audio API** ช่วยให้เข้าถึงสื่อการเรียนรู้ได้โดยไม่ต้องพึ่งพาอินเทอร์เน็ต
   - คะแนนประสิทธิภาพ **Lighthouse สูงกว่า 95 คะแนน** และนำไปใช้เป็นเว็บติวออนไลน์ส่งให้เพื่อนนักศึกษาใช้งานติวเนื้อหาจริง ช่วยยกระดับผลคะแนนสอบให้สูงขึ้น
 
-### 03. AI for Editor & Motion Animation — Creative Video & AI Workflow Specialist
-- **Stack:** `CapCut` · `DaVinci Resolve` · `Motion Control AI` · `Prompt-to-Video` · `Audio Waveform Sync`
+### 03. [CLAWD & THE STAR SEED](creative-hero-3d.html) — Creative Coding & Hand-Painted Animator
+- **Stack:** p5.brush · p5.js · Python Synth BGM (84 BPM) · Chromium 60fps · Node.js
 - **Impact:** 
-  - ประยุกต์ใช้ **CapCut** และ **DaVinci Resolve** ร่วมกับโมเดล Generative AI (Prompt-to-Video & Motion Control) สร้างสรรค์โมชันกราฟิกและวิดีโอคอนเทนต์ระดับโปรดักชัน
-  - พัฒนา Automated AI Workflow สำหรับการวาง Storyboard, สร้าง Key Visuals และตัดต่อเสียง/ภาพแบบ Synchronization **ลดระยะเวลาการผลิตสื่อลงกว่า 80%**
-  - ผลิตสื่อดิจิทัลและ Visual Assets คุณภาพสูง เพิ่มยอด Engagement และความน่าสนใจของคอนเทนต์อย่างมีนัยสำคัญ
+  - สร้างภาพยนตร์แอนิเมชันสั้น 60 วินาทีเต็มด้วยโค้ดล้วน (Deterministic Creative Coding) ผ่าน **p5.js** และ **p5.brush** โดยไม่ใช้โมเดล Diffusion
+  - ออกแบบลายเส้น **Boiling Linework 12 fps** สไตล์การ์ตูนคลาสสิก พร้อมระบบสีน้ำพู่กันระบายสด (Watercolor Wash)
+  - ประพันธ์ดนตรีประกอบเปียโน & Celesta (84 BPM) ด้วย Python และเรนเดอร์ 1,440 เฟรมสู่ MP4 คมชัดระดับ 60 FPS
 
 ---
 
