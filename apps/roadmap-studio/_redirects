@@ -1,0 +1,21 @@
+# Netlify Clean & Short URLs Configuration
+/studio              /index.html                           200
+/classic             /command-center.html                  200
+/command-center      /command-center.html                  200
+/exam                /mock-exam-simulator.html             200
+/simulator           /mock-exam-simulator.html             200
+/mock-exam           /mock-exam-simulator.html             200
+/tutor               /mock-exam-simulator.html?mode=tutor  302
+/tutor-mode          /mock-exam-simulator.html?mode=tutor  302
+/unit3-deepdive      /lessons/0001-unit3-grammar-deepdive.html 200
+/unit3-collocations  /lessons/0002-unit3-vocabulary-collocations.html 200
+/unit3-reading       /lessons/0003-unit3-reading-great-writers.html 200
+/unit4-pastplans     /lessons/0004-unit4-grammar-past-plans-questions.html 200
+/unit4-hoaxes        /lessons/0005-unit4-vocabulary-hoaxes-films-news.html 200
+/unit4-reading       /lessons/0006-unit4-reading-hip-hop-hoax.html 200
+/unit3-cheatsheet    /reference/unit3-grammar-cheatsheet.html 200
+/unit3-rationales    /reference/unit3-test-bank-rationales.html 200
+/unit4-rationales    /reference/unit4-test-bank-rationales.html 200
+
+# Fallback 404 handler
+/*                   /404.html                             404

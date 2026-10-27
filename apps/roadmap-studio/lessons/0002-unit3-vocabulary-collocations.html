@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 0002: Unit 3 Vocabulary & Collocations</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../assets/quiz.js" defer></script>
+  <style>
+    /* Scoped Styles for Lesson 02 Vocabulary Mastery */
+    .collocation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.15rem;
+      margin-top: 1.25rem;
+    }
+    .colloc-card {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 1.2rem;
+      box-shadow: 3px 3px 0px var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .colloc-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px var(--ink);
+    }
+    .colloc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .colloc-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.3;
+    }
+    .colloc-badge {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      background: var(--mint);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      padding: 0.15rem 0.55rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .colloc-th {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #047857;
+      margin: 0;
+    }
+    .colloc-def {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      background: var(--cream);
+      border-left: 3px solid var(--ink);
+      padding: 0.45rem 0.75rem;
+      border-radius: 4px;
+      line-height: 1.45;
+    }
+    .colloc-ex {
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .colloc-ex mark {
+      background: var(--accent-yellow);
+      color: var(--ink);
+      font-weight: 700;
+      padding: 0.05rem 0.35rem;
+      border-radius: 3px;
+    }
+
+    /* Section 2: Concepts Grid */
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.15rem;
+      margin-top: 1.25rem;
+    }
+    .concept-card {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 1.2rem;
+      box-shadow: 3px 3px 0px var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .concept-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0px var(--ink);
+    }
+    .concept-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-family: var(--font-display);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--accent-yellow);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem;
+      align-self: flex-start;
+    }
+    .concept-item {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: var(--ink);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed var(--cream-dark);
+    }
+    .concept-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .concept-item strong {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+
+    /* Section 3: Prefix Filter & Cards */
+    .prefix-filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 1.25rem 0 1rem;
+      align-items: center;
+    }
+    .pf-filter-btn {
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0px var(--ink);
+      transition: all 0.12s ease;
+    }
+    .pf-filter-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--ink);
+      background: var(--cream);
+    }
+    .pf-filter-btn.active {
+      background: var(--cta-green);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px var(--ink);
+    }
+    .prefix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.95rem;
+      margin-top: 1rem;
+    }
+    .prefix-card {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      box-shadow: 3px 3px 0px var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    .prefix-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0px var(--ink);
+    }
+    .pf-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.2rem;
+    }
+    .pf-tag {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--ink);
+    }
+    .pf-tag.tag-un { background: var(--mint); color: var(--ink); }
+    .pf-tag.tag-in { background: var(--accent-lavender); color: var(--ink); }
+    .pf-tag.tag-ir { background: var(--accent-orange); color: var(--ink); }
+    .pf-root {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .pf-target {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+    .pf-target .highlight {
+      color: #047857;
+      text-decoration: underline;
+      text-decoration-thickness: 2.5px;
+    }
+    .pf-meaning {
+      font-size: 0.92rem;
+      color: var(--ink);
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* Tip & Trap Boxes */
+    .prefix-rule-callout {
+      background: var(--mint-soft);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 3px 3px 0px var(--ink);
+      line-height: 1.6;
+    }
+    .exam-trap-box {
+      background: var(--accent-red-soft);
+      border: 2px solid var(--ink);
+      border-left: 8px solid var(--ink);
+      border-radius: 12px;
+      padding: 1.15rem 1.35rem;
+      margin-top: 1.5rem;
+      box-shadow: 3px 3px 0px var(--ink);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="top-nav-bar">
+      <div class="top-nav-left">
+        <a href="../index.html" class="top-nav-btn btn-home">⬅️ กลับหน้าหลัก</a>
+        <div class="breadcrumbs">
+          <a href="../index.html">หน้าหลัก</a>
+          <span class="sep">/</span>
+          <span>Unit 3</span>
+          <span class="sep">/</span>
+          <strong>Lesson 02 (Vocabulary)</strong>
+        </div>
+      </div>
+      <div class="top-nav-right">
+        <a href="0001-unit3-grammar-deepdive.html" class="top-nav-btn">&larr; บทก่อนหน้า</a>
+        <a href="0003-unit3-reading-great-writers.html" class="top-nav-btn">บทถัดไป (Lesson 03) &rarr;</a>
+      </div>
+    </nav>
+    <header class="lesson-header">
+      <span class="badge">Lesson 0002 • Vocabulary Mastery</span>
+      <h1>Unit 3 Vocabulary: Work Phrases, Gig Economy & Prefixes</h1>
+      <p class="subtitle">รวมกลุ่มคำศัพท์ สำนวนงาน และคำอุปสรรคเชิงปฏิเสธที่ออกสอบชัวร์ (Questions 1–20)</p>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <strong>Mission</strong>
+          English 1 Final Exam Mastery
+        </div>
+        <div class="meta-item">
+          <strong>Exam Weight</strong>
+          Part 1 (Q1–10) & Part 3 Convo
+        </div>
+        <div class="meta-item">
+          <strong>Key Topics</strong>
+          Work Collocations, Gig Economy, Prefixes
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: WORK COLLOCATIONS -->
+    <section class="card">
+      <h2>1. Work Phrases & Collocations (คำคู่คำที่ใช้ในการทำงาน)</h2>
+      <p>กลุ่มคำและสำนวนสำคัญจากบทอ่าน <em>"Working from home"</em> ที่ออกข้อสอบตรงตัวบ่อยที่สุด (จับคู่ V. + Noun):</p>
+
+      <div class="collocation-grid">
+        <!-- Colloc 1 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">meet the deadline</h3>
+            <span class="colloc-badge">V. + Noun</span>
+          </div>
+          <p class="colloc-th">ส่งงานทันเวลา<span class="nowrap">ที่กำหนด</span></p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> do a task by a particular time</div>
+          <div class="colloc-ex"><strong>Context:</strong> "I hope we can <mark>meet the deadline</mark>. We haven't got much time."</div>
+        </div>
+
+        <!-- Colloc 2 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">keep to a routine</h3>
+            <span class="colloc-badge">V. + Prep + Noun</span>
+          </div>
+          <p class="colloc-th">ทำตาม<span class="nowrap">ตารางเวลา</span><span class="nowrap">สม่ำเสมอ</span></p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> follow a plan without changing it</div>
+          <div class="colloc-ex"><strong>Context:</strong> "Working different times makes it difficult to <mark>keep to a routine</mark>."</div>
+        </div>
+
+        <!-- Colloc 3 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">fall behind schedule</h3>
+            <span class="colloc-badge">V. + Adv + Noun</span>
+          </div>
+          <p class="colloc-th">ทำงานล่าช้ากว่าแผนที่วางไว้</p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> be late in doing work or a task</div>
+          <div class="colloc-ex"><strong>Context:</strong> "We lost two working days, so we started to <mark>fall behind schedule</mark>."</div>
+        </div>
+
+        <!-- Colloc 4 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">lose concentration</h3>
+            <span class="colloc-badge">V. + Noun</span>
+          </div>
+          <p class="colloc-th"><span class="nowrap">เสียสมาธิ</span> / <span class="nowrap">หลุดโฟกัส</span></p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> stop giving attention to something</div>
+          <div class="colloc-ex"><strong>Context:</strong> "I <mark>lost concentration</mark> so I didn't understand the end of the meeting."</div>
+        </div>
+
+        <!-- Colloc 5 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">get (something) out of the way</h3>
+            <span class="colloc-badge">Idiom</span>
+          </div>
+          <p class="colloc-th">สะสางงานให้เสร็จพ้นไป</p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> finish something so you are free to do something else</div>
+          <div class="colloc-ex"><strong>Context:</strong> "I want to get this difficult task <mark>out of the way</mark> first."</div>
+        </div>
+
+        <!-- Colloc 6 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">get a lot done</h3>
+            <span class="colloc-badge">V. Phrase</span>
+          </div>
+          <p class="colloc-th">ทำงานสำเร็จได้ปริมาณมาก</p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> finish a large amount of work</div>
+          <div class="colloc-ex"><strong>Context:</strong> "I start early in the morning so I can <mark>get a lot done</mark> before noon."</div>
+        </div>
+
+        <!-- Colloc 7 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">avoid distractions</h3>
+            <span class="colloc-badge">V. + Noun</span>
+          </div>
+          <p class="colloc-th">หลีกเลี่ยง<span class="nowrap">สิ่งรบกวน</span>สมาธิ</p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> keep away from things that take attention</div>
+          <div class="colloc-ex"><strong>Context:</strong> "My office is very busy, so it is difficult to <mark>avoid distractions</mark>."</div>
+        </div>
+
+        <!-- Colloc 8 -->
+        <div class="colloc-card">
+          <div class="colloc-header">
+            <h3 class="colloc-title">deal with a challenge</h3>
+            <span class="colloc-badge">V. + Prep + Noun</span>
+          </div>
+          <p class="colloc-th">รับมือกับ<span class="nowrap">ความท้าทาย</span> / ปัญหา</p>
+          <div class="colloc-def"><strong>Exam Definition:</strong> manage a difficult situation successfully</div>
+          <div class="colloc-ex"><strong>Context:</strong> "At first I found it hard to <mark>deal with the challenge</mark> of a new job."</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: WORK CONCEPTS & GIG ECONOMY -->
+    <section class="card">
+      <h2>2. Work Concepts & Gig Economy (แนวคิดการทำงานและสัญญาจ้าง)</h2>
+      <p>กลุ่มคำศัพท์เกี่ยวกับรูปแบบการทำงาน สัญญาจ้าง และบทบาทหน้าที่ในข้อสอบ Part 1:</p>
+
+      <div class="concepts-grid">
+        <!-- Concept 1 -->
+        <div class="concept-card">
+          <span class="concept-tag">สัญญาจ้างและระยะเวลา</span>
+          <div class="concept-item">
+            <strong>permanent (adj.):</strong> สัญญาถาวร / งานประจำระยะยาวไม่จำกัดเวลา (เช่น a permanent contract)
+          </div>
+          <div class="concept-item">
+            <strong>temporary (adj.):</strong> ชั่วคราว / งานระยะสั้นเพียงไม่กี่สัปดาห์หรือ 3 เดือนช่วงคนอื่นลา
+          </div>
+          <div class="concept-item">
+            <strong>long-term (adj.):</strong> ระยะยาว (เช่น long-term career goals แผนระยะยาว 5 ปี)
+          </div>
+        </div>
+
+        <!-- Concept 2 -->
+        <div class="concept-card">
+          <span class="concept-tag">อำนาจหน้าที่และความรับผิดชอบ</span>
+          <div class="concept-item">
+            <strong>in charge of:</strong> มีอำนาจหน้าที่ดูแล รับผิดชอบสูงสุดในโปรเจกต์ (All decisions must go through her)
+          </div>
+          <div class="concept-item">
+            <strong>take responsibility (for):</strong> แสดงความรับผิดชอบต่อการกระทำ ไม่ปัดความผิดให้ผู้อื่น (can't blame anyone else)
+          </div>
+        </div>
+
+        <!-- Concept 3 -->
+        <div class="concept-card">
+          <span class="concept-tag">ประวัติการทำงานและโอกาส</span>
+          <div class="concept-item">
+            <strong>background (n.):</strong> ประสบการณ์หรือประวัติการทำงาน/การศึกษาในอดีต (เช่น a background in finance/tourism)
+          </div>
+          <div class="concept-item">
+            <strong>opportunity (n.):</strong> โอกาส (นับได้ เช่น several opportunities to learn new skills)
+          </div>
+        </div>
+
+        <!-- Concept 4 -->
+        <div class="concept-card">
+          <span class="concept-tag">ความเป็นธรรมในที่ทำงาน</span>
+          <div class="concept-item">
+            <strong>exploited (adj.) / exploit (v.):</strong> ถูกเอาเปรียบ (ทำงานชั่วโมงยาวนานแต่ได้ค่าแรงต่ำมาก)
+          </div>
+          <div class="concept-item">
+            <strong>treated unfairly:</strong> ได้รับการปฏิบัติอย่างไม่เป็นธรรม / สองมาตรฐาน
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: NEGATIVE PREFIXES -->
+    <section class="card">
+      <h2>3. Negative Prefixes: in-, ir-, un- (คำอุปสรรคเชิงปฏิเสธ)</h2>
+      <p>กลุ่มคำคุณศัพท์บอกลักษณะที่ข้อสอบนำมาเติม Prefix เชิงปฏิเสธ (เปลี่ยนความหมายเป็น "ไม่- / ขาด-"):</p>
+
+      <!-- Prefix Rules Callout -->
+      <div class="prefix-rule-callout">
+        <strong>💡 กฎเกณฑ์และเทคนิคช่วยจำแม่นยำ:</strong><br>
+        • <strong>ir-</strong>: ใช้เฉพาะคำที่ขึ้นต้นด้วยพยัญชนะ <code>r</code> เสมอ (เช่น <em>regular &rarr; irregular</em>, <em>responsible &rarr; irresponsible</em>)<br>
+        • <strong>in-</strong>: ใช้กับคำเฉพาะกลุ่ม เช่น <em>appropriate</em>, <em>formal</em>, <em>expensive</em>, <em>flexible</em>, <em>sensitive</em>, <em>dependent</em><br>
+        • <strong>un-</strong>: เป็น Prefix ปฏิเสธที่<strong>พบบ่อยที่สุดในภาษาอังกฤษ</strong> (คำส่วนใหญ่ในข้อสอบใช้ un-)
+      </div>
+
+      <!-- Interactive Filter Bar -->
+      <div class="prefix-filter-bar">
+        <span style="font-weight: 700; font-size: 0.9rem; color: var(--ink);">เลือกดูกลุ่มคำ:</span>
+        <button class="pf-filter-btn active" onclick="filterPrefix('all', this)">🔘 ทั้งหมด (20 คำ)</button>
+        <button class="pf-filter-btn" onclick="filterPrefix('un', this)">🟢 un- (พบบ่อยสุด 12 คำ)</button>
+        <button class="pf-filter-btn" onclick="filterPrefix('in', this)">🔵 in- (6 คำ)</button>
+        <button class="pf-filter-btn" onclick="filterPrefix('ir', this)">🟣 ir- (นำหน้า r 2 คำ)</button>
+      </div>
+
+      <!-- Prefix Cards Grid -->
+      <div class="prefix-grid" id="prefixGrid">
+        <!-- ir- cards (2 items) -->
+        <div class="prefix-card" data-prefix="ir">
+          <div class="pf-head">
+            <span class="pf-tag tag-ir">ir- (นำหน้า r)</span>
+            <span class="pf-root">regular</span>
+          </div>
+          <div class="pf-target"><span class="highlight">ir</span>regular</div>
+          <div class="pf-meaning">ไม่ปกติ / ไม่สม่ำเสมอ</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="ir">
+          <div class="pf-head">
+            <span class="pf-tag tag-ir">ir- (นำหน้า r)</span>
+            <span class="pf-root">responsible</span>
+          </div>
+          <div class="pf-target"><span class="highlight">ir</span>responsible</div>
+          <div class="pf-meaning">ขาดความรับผิดชอบ</div>
+        </div>
+
+        <!-- in- cards (6 items) -->
+        <div class="prefix-card" data-prefix="in">
+          <div class="pf-head">
+            <span class="pf-tag tag-in">in-</span>
+            <span class="pf-root">appropriate</span>
+          </div>
+          <div class="pf-target"><span class="highlight">in</span>appropriate</div>
+          <div class="pf-meaning">ไม่เหมาะสม / ผิดกาลเทศะ</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="in">
+          <div class="pf-head">
+            <span class="pf-tag tag-in">in-</span>
+            <span class="pf-root">dependent</span>
+          </div>
+          <div class="pf-target"><span class="highlight">in</span>dependent</div>
+          <div class="pf-meaning">เป็นอิสระ / พึ่งพาตนเองได้</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="in">
+          <div class="pf-head">
+            <span class="pf-tag tag-in">in-</span>
+            <span class="pf-root">expensive</span>
+          </div>
+          <div class="pf-target"><span class="highlight">in</span>expensive</div>
+          <div class="pf-meaning">ไม่แพง / ราคาย่อมเยา</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="in">
+          <div class="pf-head">
+            <span class="pf-tag tag-in">in-</span>
+            <span class="pf-root">flexible</span>
+          </div>
+          <div class="pf-target"><span class="highlight">in</span>flexible</div>
+          <div class="pf-meaning">ไม่ยืดหยุ่น / ปรับเปลี่ยนยาก</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="in">
+          <div class="pf-head">
+            <span class="pf-tag tag-in">in-</span>
+            <span class="pf-root">formal</span>
+          </div>
+          <div class="pf-target"><span class="highlight">in</span>formal</div>
+          <div class="pf-meaning">ไม่เป็นทางการ / กันเอง</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="in">
+          <div class="pf-head">
+            <span class="pf-tag tag-in">in-</span>
+            <span class="pf-root">sensitive</span>
+          </div>
+          <div class="pf-target"><span class="highlight">in</span>sensitive</div>
+          <div class="pf-meaning">ไม่แคร์ความรู้สึกผู้อื่น / ด้านชา</div>
+        </div>
+
+        <!-- un- cards (12 items) -->
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">certain</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>certain</div>
+          <div class="pf-meaning">ไม่แน่นอน / ลังเล</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">clear</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>clear</div>
+          <div class="pf-meaning">ไม่ชัดเจน / คลุมเครือ</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">confident</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>confident</div>
+          <div class="pf-meaning">ไม่มั่นใจในตนเอง</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">employed</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>employed</div>
+          <div class="pf-meaning">ว่างงาน / ตกงาน</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">enthusiastic</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>enthusiastic</div>
+          <div class="pf-meaning">ไม่กระตือรือร้น / เฉื่อยชา</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">fair</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>fair</div>
+          <div class="pf-meaning">ไม่ยุติธรรม / ไม่เป็นธรรม</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">healthy</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>healthy</div>
+          <div class="pf-meaning">ไม่ดีต่อสุขภาพ / เสียสุขภาพ</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">lucky</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>lucky</div>
+          <div class="pf-meaning">โชคร้าย / เคราะห์ร้าย</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">necessary</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>necessary</div>
+          <div class="pf-meaning">ไม่จำเป็น / เกินความจำเป็น</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">popular</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>popular</div>
+          <div class="pf-meaning">ไม่เป็นที่นิยม / คนไม่ชื่นชอบ</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">professional</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>professional</div>
+          <div class="pf-meaning">ไม่เป็นมืออาชีพ / ขาดมารยาทการทำงาน</div>
+        </div>
+
+        <div class="prefix-card" data-prefix="un">
+          <div class="pf-head">
+            <span class="pf-tag tag-un">un-</span>
+            <span class="pf-root">willing</span>
+          </div>
+          <div class="pf-target"><span class="highlight">un</span>willing</div>
+          <div class="pf-meaning">ไม่เต็มใจ / อิดออด</div>
+        </div>
+      </div>
+
+      <!-- Exam Trap Alert -->
+      <div class="exam-trap-box">
+        <h3 style="font-family: var(--font-display); font-size: 1.1rem; color: #991B1B; margin: 0 0 0.5rem;">⚠️ Exam Trap Alert: จุดลวงยอดฮิตในห้องสอบ!</h3>
+        <div>• ❌ <em>inprofessional</em> / <em>disprofessional</em> &rarr; ✅ <strong>unprofessional</strong> (ข้อสอบชอบนำ inprofessional มาเป็นช้อยส์หลอกบ่อยที่สุด!)</div>
+        <div>• ❌ <em>disemployed</em> &rarr; ✅ <strong>unemployed</strong> (ว่างงาน ใช้ un- เท่านั้น)</div>
+        <div>• ❌ <em>unresponsible</em> &rarr; ✅ <strong>irresponsible</strong> (ขึ้นต้นด้วย r ต้องเปลี่ยนเป็น ir- และสะกดด้วย <code>rr</code> เสมอ)</div>
+        <div>• ❌ <em>unformal</em> &rarr; ✅ <strong>informal</strong> (ไม่เป็นทางการ ใช้ in- เท่านั้น)</div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE QUIZ -->
+    <section class="card quiz-section">
+      <h2>⚡ Interactive Vocabulary Quiz (แนวข้อสอบจริง)</h2>
+
+      <div class="quiz-card" id="vq1">
+        <div class="quiz-q">1. Working at different times every day makes it difficult for me to ______, so I now start and finish work at the same time each day.</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="selectOption(this)">A. meet the deadline</div>
+          <div class="quiz-option" onclick="selectOption(this)">B. keep to a routine</div>
+          <div class="quiz-option" onclick="selectOption(this)">C. lose concentration</div>
+          <div class="quiz-option" onclick="selectOption(this)">D. get something out of the way</div>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('vq1', 1, 'keep to a routine แปลว่า ทำตามตารางเวลาสม่ำเสมอ ตรงกับบริบทการเริ่มและเลิกงานเวลาเดิมทุกวันครับ')">ตรวจคำตอบ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-card" id="vq2">
+        <div class="quiz-q">2. The company needs an assistant for only three months while a staff member is on leave, so the position is ______.</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="selectOption(this)">A. permanent</div>
+          <div class="quiz-option" onclick="selectOption(this)">B. long-term</div>
+          <div class="quiz-option" onclick="selectOption(this)">C. temporary</div>
+          <div class="quiz-option" onclick="selectOption(this)">D. background</div>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('vq2', 2, 'ต้องการแค่ 3 เดือนช่วงคนอื่นลา จึงเป็นตำแหน่งชั่วคราว (temporary) ครับ')">ตรวจคำตอบ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-card" id="vq3">
+        <div class="quiz-q">3. Elena is ______ of the new project, so all important decisions must go through her.</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="selectOption(this)">A. treated unfairly</div>
+          <div class="quiz-option" onclick="selectOption(this)">B. in background</div>
+          <div class="quiz-option" onclick="selectOption(this)">C. in charge</div>
+          <div class="quiz-option" onclick="selectOption(this)">D. exploited</div>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('vq3', 2, 'in charge (of) แปลว่า ดูแลรับผิดชอบโปรเจกต์ การตัดสินใจจึงต้องผ่านเธอทั้งหมด')">ตรวจคำตอบ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-card" id="vq4">
+        <div class="quiz-q">4. The assistant made a rude comment in front of the clients. That behaviour was totally ______.</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="selectOption(this)">A. inprofessional</div>
+          <div class="quiz-option" onclick="selectOption(this)">B. unprofessional</div>
+          <div class="quiz-option" onclick="selectOption(this)">C. disprofessional</div>
+          <div class="quiz-option" onclick="selectOption(this)">D. nonprofessional</div>
+        </div>
+        <button class="quiz-btn" onclick="checkQuiz('vq4', 1, 'professional ใช้ Prefix ปฏิเสธคือ un- &rarr; unprofessional ครับ')">ตรวจคำตอบ</button>
+        <div class="quiz-feedback"></div>
+      </div>
+    </section>
+
+    <footer class="lesson-footer">
+      <div><a href="0001-unit3-grammar-deepdive.html">&larr; Lesson 01: Grammar</a></div>
+      <div><a href="0003-unit3-reading-great-writers.html">Lesson 03: Reading "Great Writers" &rarr;</a></div>
+    </footer>
+  </div>
+
+  <script>
+    function filterPrefix(type, btn) {
+      document.querySelectorAll('.pf-filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const cards = document.querySelectorAll('.prefix-card');
+      cards.forEach(card => {
+        if (type === 'all' || card.dataset.prefix === type) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      if (typeof window !== 'undefined' && window.Eng1Sound) {
+        window.Eng1Sound.playClick();
+      }
+    }
+  </script>
+  <script src="../assets/vendor/lenis.min.js" defer></script>
+  <script src="../assets/vendor/gsap.min.js" defer></script>
+  <script src="../assets/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="../assets/motion-sound.js" defer></script>
+</body>
+</html>

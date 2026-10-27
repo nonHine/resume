@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English 1 Final Exam Simulator (100 ข้อ จับเวลา 3 ชั่วโมง)</title>
+  <link rel="icon" type="image/x-icon" href="folder_icon.ico">
+  <meta name="description" content="ระบบจำลองสอบเสมือนจริง 100 ข้อ วิชา English 1 (Roadmap B2) จับเวลา 3 ชั่วโมง ตรวจคำตอบอัตโนมัติพร้อมวิเคราะห์สถิติจุดแข็ง-จุดอ่อน">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="English 1 Final Exam Simulator — 100 ข้อ จับเวลาจริง">
+  <meta property="og:description" content="จำลองสอบเสมือนจริง 100 ข้อ ครบทั้ง Unit 3 & 4 ตรวจคำตอบอัตโนมัติและมีคำอธิบายเฉลยทุกข้อ!">
+  <meta property="og:image" content="folder_icon.ico">
+  <meta name="theme-color" content="#FF5E5B">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/mock_exam_data.js"></script>
+  <style>
+    body {
+      padding: 0 0 3rem;
+      background: var(--cream);
+    }
+    .exam-header-bar {
+      position: sticky;
+      top: 0.75rem;
+      z-index: 100;
+      max-width: 1280px;
+      margin: 0.75rem auto 0;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.7rem 1.2rem;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 4px 4px 0px var(--cta-green);
+      gap: 0.85rem;
+      flex-wrap: nowrap;
+    }
+    .exam-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+    .exam-title {
+      min-width: 0;
+    }
+    .exam-title h1 {
+      color: var(--paper);
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .exam-title p {
+      color: var(--mint);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .timer-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
+    }
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 800;
+      background: #1E1C2E;
+      padding: 0.22rem 0.85rem;
+      border-radius: 999px;
+      color: var(--cta-green);
+      border: 2px solid var(--cta-green);
+      white-space: nowrap;
+    }
+    .timer-btn {
+      background: var(--paper);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 0.42rem 0.88rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 800;
+      box-shadow: 2px 2px 0px var(--cta-green);
+      transition: transform 0.12s ease, background 0.12s ease;
+      white-space: nowrap;
+    }
+    .timer-btn:hover { background: var(--accent-yellow); transform: translate(-1px, -1px); }
+    .btn-submit-exam {
+      background: var(--cta-green);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 0.48rem 1.15rem;
+      border-radius: 999px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 0.88rem;
+      box-shadow: 3px 3px 0px var(--paper);
+      transition: transform 0.12s ease, background 0.12s ease;
+      white-space: nowrap;
+    }
+    .btn-submit-exam:hover { background: var(--cta-green-hover); transform: translate(-1px, -1px); }
+    
+    /* Interactive Touch Target Baseline (>= 44px) */
+    .btn-tutor-tool,
+    .tf-btn,
+    .timer-btn,
+    .btn-submit-exam,
+    .nav-btn,
+    .nav-btn-back,
+    .sound-toggle-btn,
+    .mode-pill-btn,
+    .rlc-link-btn,
+    .palette-btn,
+    .btn-toggle-context,
+    .mobile-dock-btn,
+    .btn-close-palette {
+      min-height: 44px;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Zero-Overflow Universal Container Constraints */
+    .exam-layout,
+    .exam-layout > main,
+    .exam-layout > aside,
+    .q-card,
+    .palette-card,
+    .callout-rule,
+    .related-lesson-card {
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .exam-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.5rem;
+      max-width: 1280px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    /* Mobile Sticky Bottom Dock (Hidden on Desktop) */
+    .mobile-bottom-dock,
+    .palette-backdrop {
+      display: none;
+    }
+
+    @media (max-width: 1180px) {
+      .exam-header-bar { padding: 0.5rem 0.75rem; gap: 0.4rem; }
+      .exam-header-left { gap: 0.5rem; }
+      .exam-title h1 { font-size: 1.05rem; }
+      .exam-title p { font-size: 0.7rem; }
+      .timer-container { gap: 0.4rem; }
+      .timer-display { font-size: 1.05rem; padding: 0.18rem 0.55rem; }
+      .timer-btn { padding: 0.32rem 0.6rem; font-size: 0.74rem; }
+      .btn-submit-exam { padding: 0.35rem 0.72rem; font-size: 0.76rem; }
+      .nav-btn-back { padding: 0.34rem 0.65rem; font-size: 0.75rem; }
+      .sound-toggle-btn { padding: 0.3rem 0.55rem; font-size: 0.72rem; }
+    }
+
+    @media (max-width: 900px) {
+      .exam-layout {
+        grid-template-columns: 1fr;
+        padding: 0 0.85rem;
+        margin: 1rem auto;
+      }
+      .exam-header-bar {
+        border-radius: 0 0 16px 16px;
+        margin: 0 0 0.65rem 0;
+        top: 0;
+        flex-wrap: wrap;
+      }
+      .exam-header-left { flex-wrap: wrap; }
+      .timer-container { flex-wrap: wrap; width: 100%; justify-content: space-between; }
+
+      /* Horizontal swipeable tutor filter bar */
+      .tutor-filter-bar {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0.5rem 0.65rem;
+        gap: 0.45rem;
+      }
+      .tutor-filter-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .tf-label {
+        flex-shrink: 0;
+        margin-right: 0.35rem;
+      }
+      .tf-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+        min-height: 44px;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.82rem;
+      }
+
+      /* Palette 10-column layout for iPad portrait (641px–900px) */
+      .palette-grid {
+        grid-template-columns: repeat(10, 1fr) !important;
+        max-height: none;
+        gap: 0.35rem;
+      }
+      .palette-btn {
+        height: 42px;
+        font-size: 0.82rem;
+      }
+
+      /* Mobile Sticky Bottom Dock */
+      .mobile-bottom-dock {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 0.5rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        background: var(--ink);
+        border-top: 2.5px solid var(--cta-green);
+        padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+      }
+      .mobile-dock-btn {
+        background: var(--paper);
+        color: var(--ink);
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.84rem;
+        min-height: 44px;
+        padding: 0.35rem 0.75rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        white-space: nowrap;
+        transition: all 0.12s ease;
+      }
+      .mobile-dock-btn:hover {
+        background: var(--mint);
+        transform: translateY(-1px);
+      }
+      .mobile-dock-btn.btn-dock-accent {
+        background: var(--cta-green);
+        box-shadow: 2px 2px 0px var(--ink);
+      }
+      .mobile-dock-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      /* Slide-up Palette Drawer */
+      .palette-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(17, 16, 27, 0.7);
+        backdrop-filter: blur(2px);
+        z-index: 240;
+      }
+      .palette-backdrop.active {
+        display: block;
+      }
+      .palette-card.drawer-mode {
+        display: none;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        max-height: 80vh;
+        z-index: 250;
+        background: var(--paper);
+        border: 2px solid var(--ink);
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
+        overflow-y: auto;
+        padding: 1rem 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
+        animation: slideUpDrawer 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .palette-card.drawer-mode.active {
+        display: block;
+      }
+      @keyframes slideUpDrawer {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+      .palette-drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        border-bottom: 2px solid var(--ink);
+        padding-bottom: 0.5rem;
+      }
+      .btn-close-palette {
+        background: var(--accent-red);
+        color: var(--ink);
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        padding: 0.35rem 0.95rem;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.85rem;
+        min-height: 44px;
+        cursor: pointer;
+        box-shadow: 2px 2px 0px var(--ink);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .exam-header-bar {
+        padding: 0.45rem 0.65rem;
+        margin: 0;
+        border-radius: 0 0 16px 16px;
+        top: 0;
+        gap: 0.35rem;
+      }
+      .exam-title h1 {
+        font-size: 0.92rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .exam-title p {
+        display: none !important;
+      }
+      /* Hide redundant timer elements in tutor mode on phone */
+      body.is-tutor-mode .timer-container #timerDisplay,
+      body.is-tutor-mode .timer-container #btnToggleTimer {
+        display: none !important;
+      }
+      .timer-display {
+        font-size: 0.95rem;
+        padding: 0.15rem 0.5rem;
+      }
+      .timer-btn,
+      .btn-submit-exam {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+        min-height: 44px;
+      }
+      .nav-btn-back {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+        min-height: 44px;
+      }
+      .sound-toggle-btn {
+        min-height: 44px;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+      }
+
+      /* Mode Switcher 50/50 Grid */
+      .mode-switcher-container {
+        padding: 0 0.5rem;
+        margin-top: 0.5rem;
+      }
+      .mode-switcher-bar {
+        border-radius: 14px;
+        padding: 0.45rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+      }
+      .mode-pills-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        gap: 0.35rem;
+      }
+      .mode-pill-btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        min-height: 44px;
+        padding: 0.35rem 0.45rem;
+        font-size: 0.8rem;
+        white-space: normal;
+        line-height: 1.25;
+      }
+      .tutor-stats-badge {
+        width: 100%;
+        justify-content: space-around;
+        box-sizing: border-box;
+        padding: 0.4rem 0.65rem;
+        font-size: 0.8rem;
+      }
+
+      /* Question Card Compact & Zero-Overflow */
+      .exam-layout {
+        padding: 0 0.5rem;
+        margin: 0.65rem auto;
+      }
+      .q-card {
+        padding: 1.15rem 0.85rem;
+        border-radius: 14px;
+        margin-bottom: 5.25rem; /* space for mobile bottom dock */
+      }
+      .q-title {
+        font-size: 1.05rem;
+        line-height: 1.5;
+        margin-bottom: 1.15rem;
+      }
+      .opt-item {
+        padding: 0.75rem 0.95rem;
+        font-size: 0.92rem;
+        min-height: 44px;
+      }
+
+      /* Reading context header and box */
+      .q-context-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        gap: 0.5rem;
+      }
+      .btn-toggle-context {
+        background: var(--paper);
+        color: var(--ink);
+        border: 1.5px solid var(--ink);
+        border-radius: 999px;
+        font-family: var(--font-display);
+        font-size: 0.78rem;
+        font-weight: 800;
+        padding: 0.35rem 0.75rem;
+        min-height: 44px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        box-shadow: 1.5px 1.5px 0px var(--ink);
+      }
+      .q-context-box {
+        padding: 1rem;
+        font-size: 0.88rem;
+        line-height: 1.65;
+        max-height: 260px;
+        transition: max-height 0.25s ease;
+      }
+      .q-context-box.collapsed {
+        max-height: 80px;
+        opacity: 0.85;
+      }
+
+      /* Tutor Action Strip 50/50 Grid */
+      .tutor-action-strip {
+        padding: 0.65rem 0.75rem;
+        border-radius: 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.45rem;
+      }
+      .tutor-action-strip > div:first-child {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        gap: 0.45rem;
+      }
+      .btn-tutor-tool {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0.35rem 0.45rem;
+        font-size: 0.78rem;
+        text-align: center;
+        white-space: normal;
+        line-height: 1.25;
+      }
+
+      /* Nav buttons 1-row layout */
+      .q-nav-actions {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 0.35rem;
+        width: 100%;
+      }
+      .q-nav-actions .nav-btn {
+        padding: 0.45rem 0.5rem;
+        font-size: 0.78rem;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      /* Related Lesson Card full-width buttons */
+      .related-lesson-card {
+        padding: 0.85rem;
+      }
+      .rlc-header {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .rlc-badge {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .rlc-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 0.45rem;
+      }
+      .rlc-link-btn {
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: center;
+        min-height: 44px;
+        text-align: center;
+        white-space: normal;
+      }
+
+      /* Palette 5-columns on phone */
+      .palette-grid {
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 0.35rem;
+      }
+      .palette-btn {
+        height: 44px;
+        font-size: 0.85rem;
+      }
+    }
+    .q-context-box {
+      background: var(--ink);
+      color: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 1.35rem;
+      margin-bottom: 1.35rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      white-space: pre-line;
+      max-height: 380px;
+      overflow-y: auto;
+      box-shadow: 4px 4px 0px var(--mint);
+    }
+    .q-card {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 18px;
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.5rem;
+    }
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.15rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0.65rem;
+    }
+    #qPartBadge {
+      background: var(--mint);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--ink);
+    }
+    #qCounter {
+      background: var(--ink);
+      color: var(--cta-green);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+    }
+    .q-title {
+      font-family: var(--font-display);
+      font-size: 1.22rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.55;
+      white-space: pre-line;
+      color: var(--ink);
+    }
+    .opt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .opt-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.95rem 1.25rem;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      background: var(--paper);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-xs);
+    }
+    .opt-item:hover {
+      background: var(--cream);
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: var(--shadow-sm);
+    }
+    body.is-graded .opt-item {
+      cursor: default;
+    }
+    body.is-graded .opt-item:not(.correct):not(.wrong):hover {
+      background: var(--paper);
+      border-color: var(--ink);
+      transform: none;
+      box-shadow: var(--shadow-xs);
+    }
+    .opt-item.selected {
+      border-color: var(--ink);
+      background: var(--accent-yellow);
+      color: var(--ink);
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+    }
+    .opt-item.correct {
+      border-color: var(--ink);
+      background: var(--cta-green);
+      color: var(--ink);
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+    }
+    .opt-item.wrong {
+      border-color: var(--ink);
+      background: var(--accent-red);
+      color: var(--ink);
+      text-decoration: line-through;
+      font-weight: 700;
+    }
+    
+    .q-nav-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      padding: 0.65rem 1.3rem;
+      border-radius: 999px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: var(--shadow-xs);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+    .nav-btn:hover { background: var(--mint); transform: translate(-1.5px, -1.5px); box-shadow: var(--shadow-sm); }
+    .btn-flag {
+      background: var(--accent-yellow);
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+    
+    /* Navigator Palette */
+    .palette-card {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 18px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 5.75rem;
+      overflow: hidden;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.45rem;
+      margin-top: 0.85rem;
+      max-height: calc(100vh - 11.5rem);
+      overflow-y: auto;
+      padding: 3px;
+    }
+    @media (max-width: 900px) {
+      .palette-card {
+        position: static;
+      }
+      .palette-grid {
+        max-height: none;
+        overflow-y: visible;
+      }
+    }
+    .palette-btn {
+      height: 38px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s ease;
+    }
+    .palette-btn:hover { background: var(--mint); transform: translateY(-1px); }
+    .palette-btn.active { outline: 3px solid var(--ink); outline-offset: 1px; background: var(--accent-yellow); }
+    .palette-btn.answered { background: var(--ink); color: var(--cta-green); border-color: var(--ink); }
+    .palette-btn.ans-correct { background: var(--cta-green); color: var(--ink); border-color: var(--ink); }
+    .palette-btn.ans-wrong { background: var(--accent-red); color: var(--ink); border-color: var(--ink); }
+    .palette-btn.ans-skipped { background: #D6D3C4; color: var(--ink); border-color: var(--ink); }
+    .palette-btn.flagged { border: 2.5px solid #D97706 !important; box-shadow: 0 0 0 2px #FDE047; }
+    
+    /* Score Modal */
+    .score-summary-card {
+      background: var(--mint);
+      border: 2px solid var(--ink);
+      border-radius: 18px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-md);
+      display: none;
+    }
+    .score-big {
+      font-family: var(--font-display);
+      font-size: 3.25rem;
+      font-weight: 800;
+      color: var(--ink);
+      text-align: center;
+      margin: 0.75rem 0;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.35rem 1.25rem;
+      border-radius: 9999px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.35rem;
+      background: var(--paper);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: var(--shadow-xs);
+    }
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .breakdown-box {
+      background: var(--paper);
+      padding: 1rem;
+      border-radius: 12px;
+      border: 2px solid var(--ink);
+      box-shadow: var(--shadow-xs);
+      text-align: center;
+    }
+    .breakdown-box h3, .breakdown-box h4 { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-muted); margin-bottom: 0.25rem; text-transform: uppercase; }
+    .breakdown-box .val { font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; color: var(--ink); }
+    .nav-btn-back {
+      background: var(--mint);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 0.42rem 0.9rem;
+      border-radius: 999px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 2px 2px 0px var(--cta-green);
+      transition: transform 0.12s ease, background 0.12s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-btn-back:hover {
+      background: var(--cta-green);
+      color: var(--ink);
+      transform: translate(-1px, -1px);
+    }
+
+    /* Mode Switcher & Tutor Controls */
+    .mode-switcher-container {
+      max-width: 1280px;
+      margin: 0.85rem auto 0;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .mode-switcher-bar {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 0.35rem 0.5rem;
+      box-shadow: 3px 3px 0px var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .mode-pills-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .mode-pill-btn {
+      background: transparent;
+      border: 2px solid transparent;
+      padding: 0.42rem 1.1rem;
+      border-radius: 999px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+    }
+    .mode-pill-btn:hover {
+      background: var(--cream);
+      border-color: var(--ink);
+      transform: translate(-1px, -1px);
+    }
+    .mode-pill-btn.active {
+      background: var(--cta-green);
+      border-color: var(--ink);
+      box-shadow: 2px 2px 0px var(--ink);
+      transform: translate(0, 0);
+    }
+    .tutor-stats-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.3rem 0.85rem;
+      background: var(--cream);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .tutor-filter-bar {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 0.6rem 0.85rem;
+      box-shadow: 3px 3px 0px var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .tf-label {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--ink);
+      margin-right: 0.25rem;
+    }
+    .tf-btn {
+      background: var(--cream);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      padding: 0.32rem 0.78rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: 1.5px 1.5px 0px var(--ink);
+      transition: all 0.1s ease;
+      white-space: nowrap;
+    }
+    .tf-btn:hover {
+      background: var(--mint);
+      transform: translate(-1px, -1px);
+      box-shadow: 2.5px 2.5px 0px var(--ink);
+    }
+    .tf-btn.active {
+      background: var(--ink);
+      color: var(--cta-green);
+      transform: translate(1px, 1px);
+      box-shadow: none;
+    }
+
+    /* Per-Question Tutor Action Strip */
+    .tutor-action-strip {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--mint-soft);
+      border: 2px dashed var(--ink);
+      border-radius: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .btn-tutor-tool {
+      background: var(--paper);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 0.4rem 0.95rem;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0px var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.12s ease;
+      white-space: nowrap;
+    }
+    .btn-tutor-tool:hover {
+      background: var(--cta-green);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--ink);
+    }
+    .btn-tutor-tool.btn-reveal:hover {
+      background: var(--accent-yellow);
+    }
+
+    /* Related Lesson Card inside Explanation Box */
+    .related-lesson-card {
+      margin-top: 1.15rem;
+      background: var(--cream);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      box-shadow: 2px 2px 0px var(--ink);
+    }
+    .rlc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+    .rlc-badge {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 800;
+      background: var(--mint);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .rlc-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--ink);
+      margin: 0;
+    }
+    .rlc-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0.35rem 0 0.75rem;
+    }
+    .rlc-links {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .rlc-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--cta-green);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      padding: 0.35rem 0.85rem;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.82rem;
+      text-decoration: none;
+      box-shadow: 2px 2px 0px var(--ink);
+      transition: all 0.12s ease;
+      white-space: nowrap;
+    }
+    .rlc-link-btn:hover {
+      background: var(--cta-green-hover);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--ink);
+    }
+    .rlc-link-secondary {
+      background: var(--paper);
+    }
+    .rlc-link-secondary:hover {
+      background: var(--accent-yellow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="exam-header-bar">
+    <div class="exam-header-left">
+      <button class="nav-btn-back" onclick="confirmExitToHome()">⬅️ กลับหน้าหลัก</button>
+      <div class="exam-title">
+        <h1>ENG1.PREP // FINAL EXAM SIMULATOR</h1>
+        <p>Pearson Roadmap B2 • Units 3–4 (100 Questions • 180 Mins)</p>
+      </div>
+    </div>
+    <div class="timer-container">
+      <div class="timer-display" id="timerDisplay">03:00:00</div>
+      <button class="timer-btn" id="btnToggleTimer" onclick="toggleTimer()">Pause</button>
+      <button class="btn-submit-exam" onclick="submitExam()">ส่งข้อสอบ & ตรวจคะแนน</button>
+    </div>
+  </header>
+
+  <!-- MODE SWITCHER & TUTOR BAR -->
+  <div class="mode-switcher-container">
+    <div class="mode-switcher-bar">
+      <div class="mode-pills-group">
+        <button class="mode-pill-btn active" id="btnModeExam" onclick="setSimulatorMode('exam')">
+          ⏱️ โหมดสอบจริง (ส่งตรวจทีเดียว)
+        </button>
+        <button class="mode-pill-btn" id="btnModeTutor" onclick="setSimulatorMode('tutor')">
+          🎓 โหมดติวทีละข้อ (เฉลยทันที)
+        </button>
+      </div>
+      <div class="tutor-stats-badge" id="tutorStatsBadge" style="display: none;">
+        <span>ฝึกแล้ว: <strong id="tutorAnsweredCount">0</strong>/100</span>
+        <span>ถูก: <strong id="tutorCorrectCount" style="color: #047857;">0</strong></span>
+        <span>ผิด: <strong id="tutorWrongCount" style="color: #B91C1C;">0</strong></span>
+      </div>
+    </div>
+
+    <!-- TUTOR FILTER & QUICK-JUMP BAR -->
+    <div class="tutor-filter-bar" id="tutorFilterBar" style="display: none;">
+      <span class="tf-label">กรองชุดข้อสอบ:</span>
+      <button class="tf-btn active" id="tfBtnAll" onclick="setQuestionFilter('all')">📋 ทั้งหมด (100)</button>
+      <button class="tf-btn" id="tfBtnPart1" onclick="setQuestionFilter('part1')">🔤 Part 1: Vocab (1–20)</button>
+      <button class="tf-btn" id="tfBtnPart2" onclick="setQuestionFilter('part2')">⚙️ Part 2: Grammar (21–40)</button>
+      <button class="tf-btn" id="tfBtnPart3" onclick="setQuestionFilter('part3')">💬 Part 3: Convo (41–60)</button>
+      <button class="tf-btn" id="tfBtnPart4" onclick="setQuestionFilter('part4')">📖 Part 4: Reading (61–100)</button>
+      <button class="tf-btn" id="tfBtnWrong" onclick="setQuestionFilter('wrong')">❌ เฉพาะข้อที่ผิด</button>
+      <button class="tf-btn" id="tfBtnFlagged" onclick="setQuestionFilter('flagged')">🚩 ข้อที่ปักหมุด</button>
+    </div>
+  </div>
+
+  <div class="exam-layout">
+    <!-- LEFT: QUESTION AREA -->
+    <main>
+      <!-- RESULT CARD (HIDDEN INITIALLY) -->
+      <section class="score-summary-card" id="scoreCard">
+        <div style="text-align: center;">
+          <h2 class="badge" style="display:inline-block; font-size:0.85rem; margin-bottom:0.5rem;">OFFICIAL SCORE REPORT // ผลการสอบจำลอง</h2>
+          <div class="score-big" id="scoreDisplay">0 / 100</div>
+          <div id="gradeContainer"><span class="grade-badge" id="gradeDisplay">Grade A</span></div>
+          <p style="margin-top: 0.75rem; color: var(--ink);" id="feedbackSummary"></p>
+        </div>
+        <div class="breakdown-grid">
+          <div class="breakdown-box">
+            <h3>Part 1: Vocabulary</h3>
+            <div class="val" id="scorePart1">0 / 20</div>
+          </div>
+          <div class="breakdown-box">
+            <h3>Part 2: Grammar</h3>
+            <div class="val" id="scorePart2">0 / 20</div>
+          </div>
+          <div class="breakdown-box">
+            <h3>Part 3: Conversation</h3>
+            <div class="val" id="scorePart3">0 / 20</div>
+          </div>
+          <div class="breakdown-box">
+            <h3>Part 4: Reading</h3>
+            <div class="val" id="scorePart4">0 / 40</div>
+          </div>
+        </div>
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;" id="postGradingControls">
+          <button class="nav-btn" id="filterBtnAll" style="background: var(--paper); color: var(--ink);" onclick="setQuestionFilter('all')">📋 ดูข้อสอบทั้งหมด (100 ข้อ)</button>
+          <button class="nav-btn" id="filterBtnWrong" style="background: var(--accent-red); color: var(--ink);" onclick="setQuestionFilter('wrong')">❌ ดูเฉพาะข้อที่ตอบผิด / ข้าม</button>
+          <button class="nav-btn" id="filterBtnCorrect" style="background: var(--cta-green); color: var(--ink);" onclick="setQuestionFilter('correct')">✅ ดูเฉพาะข้อที่ตอบถูก</button>
+        </div>
+      </section>
+
+      <!-- ACTIVE QUESTION CARD -->
+      <section class="q-card" id="questionCard">
+        <div class="q-meta">
+          <span id="qPartBadge">Part 1: Vocabulary</span>
+          <span id="qSectionBadge"></span>
+          <span id="qCounter">ข้อที่ 1 / 100</span>
+        </div>
+
+        <div class="q-context-header" id="qContextHeader" style="display: none;">
+          <span style="font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; color: var(--ink);">📖 บทอ่านประกอบ (Reading Passage)</span>
+          <button type="button" class="btn-toggle-context" id="btnToggleContext" onclick="toggleReadingContext()">
+            <span id="txtToggleContext">📖 ย่อบทอ่าน</span>
+          </button>
+        </div>
+        <div class="q-context-box" id="qContextBox" style="display: none;"></div>
+
+        <div class="q-title" id="qTitle">Loading question...</div>
+
+        <div class="opt-list" id="optList"></div>
+
+        <div class="callout callout-rule" id="qExplanationBox" style="display: none; margin-top: 1.5rem; background: var(--paper); border: 2px solid var(--ink); border-left: 8px solid var(--ink); padding: 1.25rem; border-radius: 12px;">
+          <div id="qExplanationHeader" style="margin-bottom: 0.6rem;"></div>
+          <div id="qExplanationAnswer" style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.75rem;"></div>
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.25rem;">💡 วิเคราะห์เฉลยและเหตุผลทางไวยากรณ์/บริบท:</div>
+          <div id="qExplanationDetail" style="white-space: pre-line; line-height: 1.65; color: var(--ink);"></div>
+          <div id="qRelatedLessonCard" class="related-lesson-card" style="display: none;"></div>
+        </div>
+
+        <!-- PER-QUESTION TUTOR ACTION STRIP -->
+        <div class="tutor-action-strip" id="tutorActionStrip" style="display: none;">
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn-tutor-tool btn-reveal" id="btnRevealAns" onclick="revealCurrentQuestion()">
+              👁️ ดูเฉลยข้อนี้เลย (ไม่ต้องเดา)
+            </button>
+            <button class="btn-tutor-tool" id="btnRetryAns" onclick="resetCurrentQuestion()">
+              🔄 ลองทำข้อนี้ใหม่
+            </button>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--ink-muted); font-weight: 600;">คลิกช้อยส์เพื่อตรวจทันที</span>
+        </div>
+
+        <div class="q-nav-actions">
+          <button class="nav-btn" id="btnPrev" onclick="prevQuestion()">&larr; ข้อก่อนหน้า</button>
+          <button class="nav-btn btn-flag" id="btnFlag" onclick="toggleFlag()">📌 ปักหมุดไว้ทบทวน</button>
+          <button class="nav-btn" id="btnNext" onclick="nextQuestion()">ข้อถัดไป &rarr;</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT: NAVIGATION PALETTE -->
+    <aside>
+      <div class="palette-backdrop" id="paletteDrawerBackdrop" onclick="closePaletteDrawer()"></div>
+      <div class="palette-card drawer-mode" id="paletteCard">
+        <div class="palette-drawer-header">
+          <div>
+            <h3 style="font-size: 1rem; margin: 0 0 0.25rem;">ภาพรวมข้อสอบ (100 ข้อ)</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">ทำแล้ว: <span id="answeredCount" style="font-weight: 700; color: var(--primary);">0</span> / 100</p>
+          </div>
+          <button type="button" class="btn-close-palette" id="btnClosePalette" onclick="closePaletteDrawer()" aria-label="Close palette">✕ ปิด</button>
+        </div>
+        <div class="palette-grid" id="paletteGrid"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- MOBILE STICKY BOTTOM DOCK (<= 900px) -->
+  <nav class="mobile-bottom-dock" id="mobileBottomDock" aria-label="Mobile Question Navigation">
+    <button type="button" class="mobile-dock-btn" id="btnDockPrev" onclick="prevQuestion()" aria-label="Previous Question">
+      &larr; ก่อนหน้า
+    </button>
+    <button type="button" class="mobile-dock-btn btn-dock-accent" id="mobileDockQuestionBtn" onclick="openPaletteDrawer()" aria-label="Open Question Palette">
+      🗂️ ข้อ 1 / 100
+    </button>
+    <button type="button" class="mobile-dock-btn" id="btnDockNext" onclick="nextQuestion()" aria-label="Next Question">
+      ถัดไป &rarr;
+    </button>
+  </nav>
+
+  <script>
+    let currentIdx = 0;
+    const userAnswers = {};
+    const flaggedQuestions = new Set();
+    const revealedQuestions = new Set();
+    let isGraded = false;
+    let isTutorMode = false;
+    let currentFilter = 'all';
+
+    // Timer variables: 3 hours = 10800 seconds
+    let totalSeconds = 10800;
+    let timerRunning = true;
+    let timerInterval = null;
+
+    function getRelatedLessonsForQuestion(q) {
+      const id = q.id;
+      if (id >= 1 && id <= 10) {
+        return {
+          badge: 'Unit 3 Vocab',
+          title: 'Lesson 02: Unit 3 Vocabulary & Collocations',
+          url: 'lessons/0002-unit3-vocabulary-collocations.html',
+          desc: 'สรุปคำคู่คำเกี่ยวกับการทำงาน (Work Collocations), สัญญาจ้าง (Gig Economy) และ Negative Prefixes (un-, in-, ir-)',
+          refTitle: 'Unit 3 Master Test Bank',
+          refUrl: 'reference/unit3-test-bank-rationales.html'
+        };
+      } else if (id >= 11 && id <= 20) {
+        return {
+          badge: 'Unit 4 Vocab',
+          title: 'Lesson 05: Unit 4 Vocabulary (Hoaxes, Films & News)',
+          url: 'lessons/0005-unit4-vocabulary-hoaxes-films-news.html',
+          desc: 'สรุปคำศัพท์เรื่องหลอกลวง (Truth & Lies), วงการภาพยนตร์ (Film-making) และ พาดหัวข่าว (News headlines)',
+          refTitle: 'Unit 4 Master Test Bank',
+          refUrl: 'reference/unit4-test-bank-rationales.html'
+        };
+      } else if (id >= 21 && id <= 30) {
+        return {
+          badge: 'Unit 3 Grammar',
+          title: 'Lesson 01: Unit 3 Grammar Deep-Dive',
+          url: 'lessons/0001-unit3-grammar-deepdive.html',
+          desc: 'เจาะลึก Conditionals (if, unless, in case, even if), Obligation/Permission (supposed to, allowed to) และ would rather vs prefer',
+          refTitle: 'Unit 3 Grammar Cheat Sheet',
+          refUrl: 'reference/unit3-grammar-cheatsheet.html'
+        };
+      } else if (id >= 31 && id <= 40) {
+        return {
+          badge: 'Unit 4 Grammar',
+          title: 'Lesson 04: Unit 4 Grammar (Past Plans & Questions)',
+          url: 'lessons/0004-unit4-grammar-past-plans-questions.html',
+          desc: 'เจาะลึก Past Plans (was/were going to, hoping to), Indirect Questions (ถามแบบอ้อม) และ Negative Questions (คำถามเชิงปฏิเสธ)',
+          refTitle: 'Unit 4 Master Test Bank',
+          refUrl: 'reference/unit4-test-bank-rationales.html'
+        };
+      } else if (id >= 41 && id <= 50) {
+        return {
+          badge: 'Unit 3 Convo',
+          title: 'Lesson 01 & 02: Unit 3 Grammar & Work Routines',
+          url: 'lessons/0001-unit3-grammar-deepdive.html',
+          desc: 'บทสนทนาสถานการณ์ที่ 1–2: การส่งงานทันกำหนด (Deadlines), การทำงานตามตาราง และการทำงานแบบ Gig Work',
+          refTitle: 'Lesson 02: Unit 3 Vocab',
+          refUrl: 'lessons/0002-unit3-vocabulary-collocations.html'
+        };
+      } else if (id >= 51 && id <= 60) {
+        return {
+          badge: 'Unit 4 Convo',
+          title: 'Lesson 04 & 05: Unit 4 Grammar & Discussion',
+          url: 'lessons/0004-unit4-grammar-past-plans-questions.html',
+          desc: 'บทสนทนาสถานการณ์ที่ 3–5: การพูดคุยเรื่องวิดีโอสัตว์ประหลาด (Hoax), ข่าวการประท้วง และการวิจารณ์สารคดี',
+          refTitle: 'Lesson 05: Unit 4 Vocab',
+          refUrl: 'lessons/0005-unit4-vocabulary-hoaxes-films-news.html'
+        };
+      } else if (id >= 61 && id <= 70) {
+        return {
+          badge: 'Unit 3 Reading A',
+          title: 'Lesson 03: Seen Reading "Great Writers"',
+          url: 'lessons/0003-unit3-reading-great-writers.html',
+          desc: 'บทอ่านฉบับเต็มและเจาะลึก 10 ข้อ: กิจวัตรประจำวันและเคล็ดลับการทำงานของ 4 นักเขียนระดับโลก',
+          refTitle: 'Unit 3 Test Bank Rationales',
+          refUrl: 'reference/unit3-test-bank-rationales.html'
+        };
+      } else if (id >= 71 && id <= 80) {
+        return {
+          badge: 'Unit 3 Reading B',
+          title: 'Lesson 02 & 03: Unit 3 Reading Skills & Workplace',
+          url: 'lessons/0002-unit3-vocabulary-collocations.html',
+          desc: 'บทอ่าน Unseen Reading เรื่อง The Changing Workplace (การทำงานทางไกล, ความยืดหยุ่น และการสร้างสมดุล)',
+          refTitle: 'Lesson 03: Reading Skills',
+          refUrl: 'lessons/0003-unit3-reading-great-writers.html'
+        };
+      } else if (id >= 81 && id <= 90) {
+        return {
+          badge: 'Unit 4 Reading C',
+          title: 'Lesson 06: Seen Reading "The Great Hip Hop Hoax"',
+          url: 'lessons/0006-unit4-reading-hip-hop-hoax.html',
+          desc: 'บทอ่านฉบับเต็มและเจาะลึก 10 ข้อ: เรื่องจริงของ Gavin Bain และ Billy Boyd วง Silibil N\' Brains ที่ปลอมสำเนียงอเมริกัน',
+          refTitle: 'Unit 4 Test Bank Rationales',
+          refUrl: 'reference/unit4-test-bank-rationales.html'
+        };
+      } else {
+        return {
+          badge: 'Unit 4 Reading D',
+          title: 'Lesson 05 & 06: Unit 4 Fake News & Verification',
+          url: 'lessons/0005-unit4-vocabulary-hoaxes-films-news.html',
+          desc: 'บทอ่าน Unseen Reading เรื่อง The Story That Spread Too Fast (ข่าวปลอมเรื่องปิดโรงเรียน และขั้นตอนการตรวจสอบความจริงของนักข่าว)',
+          refTitle: 'Lesson 06: Hip Hop Hoax',
+          refUrl: 'lessons/0006-unit4-reading-hip-hop-hoax.html'
+        };
+      }
+    }
+
+    function toggleReadingContext() {
+      const box = document.getElementById('qContextBox');
+      const txt = document.getElementById('txtToggleContext');
+      if (!box) return;
+      box.classList.toggle('collapsed');
+      const isCollapsed = box.classList.contains('collapsed');
+      if (txt) {
+        txt.innerText = isCollapsed ? '📖 ขยายบทอ่านเต็ม' : '📖 ย่อบทอ่าน';
+      }
+      if (typeof window !== 'undefined' && window.Eng1Sound) {
+        window.Eng1Sound.playClick();
+      }
+    }
+
+    function openPaletteDrawer() {
+      const palette = document.getElementById('paletteCard');
+      const backdrop = document.getElementById('paletteDrawerBackdrop');
+      if (palette) palette.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
+      if (typeof window !== 'undefined' && window.Eng1Sound) {
+        window.Eng1Sound.playFlip();
+      }
+    }
+
+    function closePaletteDrawer() {
+      const palette = document.getElementById('paletteCard');
+      const backdrop = document.getElementById('paletteDrawerBackdrop');
+      if (palette) palette.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+    }
+
+    function setSimulatorMode(mode, silent = false) {
+      if (mode === 'tutor') {
+        isTutorMode = true;
+        if (document.body) document.body.classList.add('is-tutor-mode');
+        const btnTutor = document.getElementById('btnModeTutor');
+        const btnExam = document.getElementById('btnModeExam');
+        if (btnTutor) btnTutor.classList.add('active');
+        if (btnExam) btnExam.classList.remove('active');
+
+        const tutorFilterBar = document.getElementById('tutorFilterBar');
+        if (tutorFilterBar) tutorFilterBar.style.display = 'flex';
+        const tutorStatsBadge = document.getElementById('tutorStatsBadge');
+        if (tutorStatsBadge) tutorStatsBadge.style.display = 'flex';
+        const tutorActionStrip = document.getElementById('tutorActionStrip');
+        if (tutorActionStrip) tutorActionStrip.style.display = 'flex';
+
+        // Pause timer in tutor mode
+        if (timerRunning) {
+          timerRunning = false;
+        }
+        const timerEl = document.getElementById('timerDisplay');
+        if (timerEl) timerEl.innerText = 'โหมดติว';
+        const btnTimer = document.getElementById('btnToggleTimer');
+        if (btnTimer) {
+          btnTimer.innerText = 'ติวอิสระ';
+          btnTimer.disabled = true;
+          btnTimer.style.opacity = '0.6';
+        }
+        const submitBtn = document.querySelector('.btn-submit-exam');
+        if (submitBtn && !isGraded) {
+          submitBtn.innerText = '🏁 สรุปผลการติว 100 ข้อ';
+        }
+
+        if (!silent && typeof window !== 'undefined' && window.Eng1Sound) {
+          window.Eng1Sound.playFlip();
+        }
+      } else {
+        isTutorMode = false;
+        if (document.body) document.body.classList.remove('is-tutor-mode');
+        const btnTutor = document.getElementById('btnModeTutor');
+        const btnExam = document.getElementById('btnModeExam');
+        if (btnTutor) btnTutor.classList.remove('active');
+        if (btnExam) btnExam.classList.add('active');
+
+        const tutorFilterBar = document.getElementById('tutorFilterBar');
+        if (tutorFilterBar && !isGraded) tutorFilterBar.style.display = 'none';
+        const tutorStatsBadge = document.getElementById('tutorStatsBadge');
+        if (tutorStatsBadge) tutorStatsBadge.style.display = 'none';
+        const tutorActionStrip = document.getElementById('tutorActionStrip');
+        if (tutorActionStrip) tutorActionStrip.style.display = 'none';
+
+        if (!isGraded) {
+          timerRunning = true;
+          renderTimer();
+          const btnTimer = document.getElementById('btnToggleTimer');
+          if (btnTimer) {
+            btnTimer.innerText = 'Pause';
+            btnTimer.disabled = false;
+            btnTimer.style.opacity = '1';
+          }
+          const submitBtn = document.querySelector('.btn-submit-exam');
+          if (submitBtn) {
+            submitBtn.innerText = 'ส่งข้อสอบ & ตรวจคะแนน';
+          }
+        }
+
+        if (!silent && typeof window !== 'undefined' && window.Eng1Sound) {
+          window.Eng1Sound.playFlip();
+        }
+      }
+
+      updateTutorStats();
+      for (let i = 0; i < EXAM_QUESTIONS.length; i++) {
+        updatePaletteStatus(i);
+      }
+      renderQuestion(currentIdx);
+    }
+
+    function revealCurrentQuestion() {
+      const q = EXAM_QUESTIONS[currentIdx];
+      if (!q) return;
+      revealedQuestions.add(q.id);
+      if (typeof window !== 'undefined' && window.Eng1Sound) {
+        window.Eng1Sound.playFlip();
+      }
+      updatePaletteStatus(currentIdx);
+      updateTutorStats();
+      renderQuestion(currentIdx);
+    }
+
+    function resetCurrentQuestion() {
+      const q = EXAM_QUESTIONS[currentIdx];
+      if (!q) return;
+      delete userAnswers[q.id];
+      revealedQuestions.delete(q.id);
+      if (typeof window !== 'undefined' && window.Eng1Sound) {
+        window.Eng1Sound.playClick();
+      }
+      updatePaletteStatus(currentIdx);
+      updateTutorStats();
+      renderQuestion(currentIdx);
+    }
+
+    function updateTutorStats() {
+      let answeredCount = 0;
+      let correctCount = 0;
+      let wrongCount = 0;
+
+      EXAM_QUESTIONS.forEach(q => {
+        const uc = String(userAnswers[q.id] || '').trim().toLowerCase();
+        const ac = String(q.answer || '').trim().toLowerCase();
+        if (uc) {
+          answeredCount++;
+          if (uc === ac) correctCount++;
+          else wrongCount++;
+        }
+      });
+
+      const elAns = document.getElementById('tutorAnsweredCount');
+      const elCor = document.getElementById('tutorCorrectCount');
+      const elWrn = document.getElementById('tutorWrongCount');
+      if (elAns) elAns.innerText = answeredCount;
+      if (elCor) elCor.innerText = correctCount;
+      if (elWrn) elWrn.innerText = wrongCount;
+    }
+
+    function confirmExitToHome() {
+      if (!isGraded && !isTutorMode && (Object.keys(userAnswers).length > 0 || timerRunning)) {
+        const leave = confirm("⚠️ คุณกำลังทำข้อสอบอยู่ หากออกจากห้องสอบ ข้อมูลที่ทำไว้จะถูกรีเซ็ต\n\nต้องการออกจากห้องสอบและกลับสู่หน้าหลักหรือไม่?");
+        if (!leave) return;
+      }
+      window.location.href = "index.html";
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!timerRunning || isGraded || isTutorMode) return;
+        if (totalSeconds <= 0) {
+          clearInterval(timerInterval);
+          alert('⏰ หมดเวลาสอบ 3 ชั่วโมงแล้ว! ระบบกำลังส่งข้อสอบและตรวจคะแนนทันที');
+          submitExam(true);
+          return;
+        }
+        totalSeconds--;
+        renderTimer();
+      }, 1000);
+    }
+
+    function renderTimer() {
+      if (isTutorMode) return;
+      const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const s = String(totalSeconds % 60).padStart(2, '0');
+      const timerEl = document.getElementById('timerDisplay');
+      if (timerEl) timerEl.innerText = `${h}:${m}:${s}`;
+    }
+
+    function toggleTimer() {
+      if (isGraded || isTutorMode) return;
+      timerRunning = !timerRunning;
+      const btn = document.getElementById('btnToggleTimer');
+      if (btn) btn.innerText = timerRunning ? 'Pause' : 'Resume';
+    }
+
+    function init() {
+      buildPalette();
+      renderQuestion(0);
+      startTimer();
+    }
+
+    function buildPalette() {
+      const grid = document.getElementById('paletteGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      EXAM_QUESTIONS.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'palette-btn';
+        btn.id = `palBtn_${idx}`;
+        btn.innerText = q.id;
+        btn.onclick = () => {
+          renderQuestion(idx);
+          closePaletteDrawer();
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderQuestion(idx) {
+      currentIdx = idx;
+      const q = EXAM_QUESTIONS[idx];
+      if (!q) return;
+
+      // Badges
+      const partNames = {
+        1: 'Part 1: Vocabulary (Q1–20)',
+        2: 'Part 2: Grammar (Q21–40)',
+        3: 'Part 3: Conversation (Q41–60)',
+        4: 'Part 4: Reading Comprehension (Q61–100)'
+      };
+      const partBadge = document.getElementById('qPartBadge');
+      if (partBadge) partBadge.innerText = partNames[q.part] || `Part ${q.part}`;
+      const secBadge = document.getElementById('qSectionBadge');
+      if (secBadge) secBadge.innerText = q.section || '';
+      const counterEl = document.getElementById('qCounter');
+      if (counterEl) counterEl.innerText = `ข้อที่ ${q.id} / 100`;
+
+      // Context & Reading Header
+      const ctxHeader = document.getElementById('qContextHeader');
+      const ctxBox = document.getElementById('qContextBox');
+      const txtToggle = document.getElementById('txtToggleContext');
+      if (ctxBox) {
+        if (q.context) {
+          if (ctxHeader) ctxHeader.style.display = 'flex';
+          ctxBox.style.display = 'block';
+          ctxBox.innerText = q.context;
+          ctxBox.classList.remove('collapsed');
+          if (txtToggle) txtToggle.innerText = '📖 ย่อบทอ่าน';
+        } else {
+          if (ctxHeader) ctxHeader.style.display = 'none';
+          ctxBox.style.display = 'none';
+        }
+      }
+
+      // Question Title
+      const titleEl = document.getElementById('qTitle');
+      if (titleEl) titleEl.innerText = `${q.id}. ${q.question}`;
+
+      const userChoice = String(userAnswers[q.id] || '').trim().toLowerCase();
+      const correctChoice = String(q.answer || '').trim().toLowerCase();
+      const isRevealed = revealedQuestions.has(q.id);
+      const showSolution = isGraded || (isTutorMode && (Boolean(userChoice) || isRevealed));
+
+      // Options
+      const optList = document.getElementById('optList');
+      if (optList) {
+        optList.innerHTML = '';
+
+        q.options.forEach(opt => {
+          const div = document.createElement('div');
+          div.className = 'opt-item';
+          const optKey = String(opt.key || '').trim().toLowerCase();
+
+          if (userChoice === optKey) {
+            div.classList.add('selected');
+          }
+
+          if (showSolution) {
+            if (optKey === correctChoice) {
+              div.classList.add('correct');
+            } else if (userChoice === optKey && optKey !== correctChoice) {
+              div.classList.add('wrong');
+            }
+          }
+
+          div.onclick = () => {
+            if (isGraded) return;
+            userAnswers[q.id] = opt.key;
+            revealedQuestions.delete(q.id);
+
+            if (isTutorMode) {
+              const isCor = optKey === correctChoice;
+              if (typeof window !== 'undefined' && window.Eng1Sound) {
+                if (isCor) window.Eng1Sound.playCorrect();
+                else window.Eng1Sound.playWrong();
+              }
+              updateTutorStats();
+            }
+
+            updatePaletteStatus(idx);
+            renderQuestion(idx);
+          };
+
+          div.innerHTML = `<strong>${opt.key.toUpperCase()}.</strong> <span>${opt.text}</span>`;
+          optList.appendChild(div);
+        });
+      }
+
+      // Explanation
+      const expBox = document.getElementById('qExplanationBox');
+      if (expBox) {
+        if (showSolution) {
+          expBox.style.display = 'block';
+          const isCorrect = userChoice.length > 0 && userChoice === correctChoice;
+          const correctOpt = q.options.find(o => String(o.key).trim().toLowerCase() === correctChoice);
+          const userOpt = q.options.find(o => String(o.key).trim().toLowerCase() === userChoice);
+
+          const headerEl = document.getElementById('qExplanationHeader');
+          const ansEl = document.getElementById('qExplanationAnswer');
+          const detailEl = document.getElementById('qExplanationDetail');
+          const lessonEl = document.getElementById('qRelatedLessonCard');
+
+          if (isRevealed && !userChoice) {
+            expBox.style.background = '#FEF9C3';
+            expBox.style.borderColor = '#11101B';
+            expBox.style.borderLeftColor = '#D97706';
+            if (headerEl) {
+              headerEl.innerHTML = `
+                <span style="display:inline-block; padding: 0.25rem 0.75rem; border-radius: 10px; line-height: 1.45; max-width: 100%; background: #FDE047; color: #11101B; border: 1.5px solid #11101B; font-weight: 800; font-size: 0.88rem;">
+                  👁️ โหมดศึกษาเฉลย (เปิดดูเฉลยและเหตุผลโดยตรง)
+                </span>`;
+            }
+            if (ansEl) ansEl.style.color = '#11101B';
+          } else if (!userChoice) {
+            expBox.style.background = '#FEF9C3';
+            expBox.style.borderColor = '#11101B';
+            expBox.style.borderLeftColor = '#D97706';
+            if (headerEl) {
+              headerEl.innerHTML = `
+                <span style="display:inline-block; padding: 0.25rem 0.75rem; border-radius: 10px; line-height: 1.45; max-width: 100%; background: #FDE047; color: #11101B; border: 1.5px solid #11101B; font-weight: 800; font-size: 0.88rem;">
+                  ⚠️ ไม่ได้ตอบข้อนี้ (ข้าม)
+                </span>`;
+            }
+            if (ansEl) ansEl.style.color = '#11101B';
+          } else if (isCorrect) {
+            expBox.style.background = '#E3F9EC';
+            expBox.style.borderColor = '#11101B';
+            expBox.style.borderLeftColor = '#15803D';
+            if (headerEl) {
+              headerEl.innerHTML = `
+                <span style="display:inline-block; padding: 0.25rem 0.75rem; border-radius: 10px; line-height: 1.45; max-width: 100%; background: #42E883; color: #11101B; border: 1.5px solid #11101B; font-weight: 800; font-size: 0.88rem;">
+                  ✅ ยอดเยี่ยม! ตอบถูกต้อง (+1 คะแนน)
+                </span>`;
+            }
+            if (ansEl) ansEl.style.color = '#11101B';
+          } else {
+            expBox.style.background = '#FFE4E6';
+            expBox.style.borderColor = '#11101B';
+            expBox.style.borderLeftColor = '#DC2626';
+            if (headerEl) {
+              headerEl.innerHTML = `
+                <span style="display:inline-block; padding: 0.25rem 0.75rem; border-radius: 10px; line-height: 1.45; max-width: 100%; background: #FCA5A5; color: #11101B; border: 1.5px solid #11101B; font-weight: 800; font-size: 0.88rem;">
+                  ❌ ตอบผิด (คุณเลือก [${userChoice.toUpperCase()}] ${userOpt ? userOpt.text : ''})
+                </span>`;
+            }
+            if (ansEl) ansEl.style.color = '#11101B';
+          }
+
+          if (ansEl) {
+            ansEl.innerHTML = `
+              คำตอบที่ถูกต้องคือ: <span style="display: inline-block; background: #FCFCF8; border: 1.5px solid #11101B; padding: 0.2rem 0.6rem; border-radius: 6px; margin-top: 0.25rem; line-height: 1.45; max-width: 100%;">[${q.answer.toUpperCase()}] ${correctOpt ? correctOpt.text : ''}</span>
+              ${q.section ? `<span style="display: block; font-size: 0.85rem; font-weight: 600; color: #3F3D56; margin-top: 0.35rem;">หมวด: ${q.section}</span>` : ''}
+            `;
+          }
+
+          if (detailEl) {
+            detailEl.innerText = q.explanation || 'ไม่มีคำอธิบายเพิ่มเติม';
+          }
+
+          if (lessonEl) {
+            const lesson = getRelatedLessonsForQuestion(q);
+            if (lesson) {
+              lessonEl.style.display = 'block';
+              lessonEl.innerHTML = `
+                <div class="rlc-header">
+                  <h4 class="rlc-title">📚 ติวเนื้อหาเพิ่มสำหรับข้อนี้: ${lesson.title}</h4>
+                  <span class="rlc-badge">${lesson.badge}</span>
+                </div>
+                <p class="rlc-desc">${lesson.desc}</p>
+                <div class="rlc-links">
+                  <a href="${lesson.url}" target="_blank" class="rlc-link-btn">📖 เปิดอ่านบทเรียนนี้ &rarr;</a>
+                  ${lesson.refUrl ? `<a href="${lesson.refUrl}" target="_blank" class="rlc-link-btn rlc-link-secondary">📑 ดูใน ${lesson.refTitle}</a>` : ''}
+                </div>
+              `;
+            } else {
+              lessonEl.style.display = 'none';
+            }
+          }
+        } else {
+          expBox.style.display = 'none';
+        }
+      }
+
+      // Flag button
+      const btnFlag = document.getElementById('btnFlag');
+      if (btnFlag) {
+        if (flaggedQuestions.has(q.id)) {
+          btnFlag.innerText = '🚩 ปลดปักหมุด';
+        } else {
+          btnFlag.innerText = '📌 ปักหมุดไว้ทบทวน';
+        }
+      }
+
+      // Navigation buttons disabled state
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      if (btnPrev && btnNext) {
+        let hasPrev = false;
+        let hasNext = false;
+        if (currentFilter !== 'all') {
+          for (let i = currentIdx - 1; i >= 0; i--) {
+            if (isQuestionMatchingFilter(EXAM_QUESTIONS[i], currentFilter)) {
+              hasPrev = true;
+              break;
+            }
+          }
+          for (let i = currentIdx + 1; i < EXAM_QUESTIONS.length; i++) {
+            if (isQuestionMatchingFilter(EXAM_QUESTIONS[i], currentFilter)) {
+              hasNext = true;
+              break;
+            }
+          }
+        } else {
+          hasPrev = currentIdx > 0;
+          hasNext = currentIdx < EXAM_QUESTIONS.length - 1;
+        }
+        btnPrev.disabled = !hasPrev;
+        btnPrev.style.opacity = hasPrev ? '1' : '0.4';
+        btnPrev.style.cursor = hasPrev ? 'pointer' : 'not-allowed';
+        btnNext.disabled = !hasNext;
+        btnNext.style.opacity = hasNext ? '1' : '0.4';
+        btnNext.style.cursor = hasNext ? 'pointer' : 'not-allowed';
+
+        // Sync Mobile Bottom Dock
+        const dockPrev = document.getElementById('btnDockPrev');
+        const dockNext = document.getElementById('btnDockNext');
+        if (dockPrev) {
+          dockPrev.disabled = !hasPrev;
+          dockPrev.style.opacity = hasPrev ? '1' : '0.35';
+        }
+        if (dockNext) {
+          dockNext.disabled = !hasNext;
+          dockNext.style.opacity = hasNext ? '1' : '0.35';
+        }
+      }
+
+      // Sync Mobile Dock Question Indicator
+      const dockQuestionBtn = document.getElementById('mobileDockQuestionBtn');
+      if (dockQuestionBtn) {
+        dockQuestionBtn.innerText = `🗂️ ข้อ ${q.id} / 100`;
+      }
+
+      // Active state in palette
+      document.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`palBtn_${idx}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        if (typeof activeBtn.scrollIntoView === 'function') {
+          activeBtn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      }
+    }
+
+    function isQuestionMatchingFilter(q, fType) {
+      if (!q) return false;
+      const uc = String(userAnswers[q.id] || '').trim().toLowerCase();
+      const ac = String(q.answer || '').trim().toLowerCase();
+      const isCor = uc.length > 0 && uc === ac;
+
+      if (fType === 'all') return true;
+      if (fType === 'part1') return q.part === 1;
+      if (fType === 'part2') return q.part === 2;
+      if (fType === 'part3') return q.part === 3;
+      if (fType === 'part4') return q.part === 4;
+      if (fType === 'wrong') {
+        if (isTutorMode) return uc.length > 0 && !isCor;
+        return !isCor;
+      }
+      if (fType === 'correct') return isCor;
+      if (fType === 'flagged') return flaggedQuestions.has(q.id);
+      return true;
+    }
+
+    function updatePaletteStatus(idx) {
+      const q = EXAM_QUESTIONS[idx];
+      const btn = document.getElementById(`palBtn_${idx}`);
+      if (!btn || !q) return;
+
+      const userChoice = String(userAnswers[q.id] || '').trim().toLowerCase();
+      const correctChoice = String(q.answer || '').trim().toLowerCase();
+
+      if (isGraded || isTutorMode) {
+        btn.classList.remove('answered', 'flagged', 'ans-correct', 'ans-wrong', 'ans-skipped');
+        if (userChoice.length > 0 && userChoice === correctChoice) {
+          btn.classList.add('ans-correct');
+        } else if (revealedQuestions.has(q.id) && !userChoice) {
+          btn.classList.add('ans-skipped');
+        } else if (!userChoice) {
+          if (isGraded) btn.classList.add('ans-skipped');
+        } else {
+          btn.classList.add('ans-wrong');
+        }
+        if (flaggedQuestions.has(q.id)) {
+          btn.classList.add('flagged');
+        }
+      } else {
+        if (userChoice) {
+          btn.classList.add('answered');
+        } else {
+          btn.classList.remove('answered');
+        }
+        if (flaggedQuestions.has(q.id)) {
+          btn.classList.add('flagged');
+        } else {
+          btn.classList.remove('flagged');
+        }
+      }
+
+      const answeredTotal = Object.keys(userAnswers).filter(k => userAnswers[k]).length;
+      const countEl = document.getElementById('answeredCount');
+      if (countEl) {
+        if (isGraded || isTutorMode) {
+          let correctTotal = 0;
+          EXAM_QUESTIONS.forEach(eq => {
+            const uc = String(userAnswers[eq.id] || '').trim().toLowerCase();
+            const ac = String(eq.answer || '').trim().toLowerCase();
+            if (uc.length > 0 && uc === ac) correctTotal++;
+          });
+          countEl.innerText = `${answeredTotal} (ตอบถูก ${correctTotal} / 100)`;
+        } else {
+          countEl.innerText = answeredTotal;
+        }
+      }
+    }
+
+    function setQuestionFilter(filterType) {
+      currentFilter = filterType;
+
+      // Sync postGradingControls buttons
+      const btnAll = document.getElementById('filterBtnAll');
+      const btnWrong = document.getElementById('filterBtnWrong');
+      const btnCorrect = document.getElementById('filterBtnCorrect');
+
+      if (btnAll) {
+        btnAll.style.outline = filterType === 'all' ? '2.5px solid #11101B' : 'none';
+        btnAll.style.boxShadow = filterType === 'all' ? '4px 4px 0px #11101B' : '2px 2px 0px #11101B';
+      }
+      if (btnWrong) {
+        btnWrong.style.outline = filterType === 'wrong' ? '2.5px solid #11101B' : 'none';
+        btnWrong.style.boxShadow = filterType === 'wrong' ? '4px 4px 0px #11101B' : '2px 2px 0px #11101B';
+      }
+      if (btnCorrect) {
+        btnCorrect.style.outline = filterType === 'correct' ? '2.5px solid #11101B' : 'none';
+        btnCorrect.style.boxShadow = filterType === 'correct' ? '4px 4px 0px #11101B' : '2px 2px 0px #11101B';
+      }
+
+      // Sync tutorFilterBar buttons
+      document.querySelectorAll('.tf-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const activeTfBtn = document.querySelector(`.tf-btn[data-filter="${filterType}"]`) ||
+        document.getElementById(`tfBtn${filterType.charAt(0).toUpperCase() + filterType.slice(1)}`);
+      if (activeTfBtn) activeTfBtn.classList.add('active');
+
+      EXAM_QUESTIONS.forEach((q, idx) => {
+        const btn = document.getElementById(`palBtn_${idx}`);
+        if (!btn) return;
+        const matches = isQuestionMatchingFilter(q, filterType);
+        btn.style.opacity = matches ? '1' : '0.2';
+      });
+
+      const currQ = EXAM_QUESTIONS[currentIdx];
+      if (!isQuestionMatchingFilter(currQ, filterType)) {
+        const firstMatch = EXAM_QUESTIONS.findIndex(q => isQuestionMatchingFilter(q, filterType));
+        if (firstMatch !== -1) renderQuestion(firstMatch);
+      } else {
+        renderQuestion(currentIdx);
+      }
+    }
+
+    function toggleFlag() {
+      const qId = EXAM_QUESTIONS[currentIdx].id;
+      if (flaggedQuestions.has(qId)) {
+        flaggedQuestions.delete(qId);
+      } else {
+        flaggedQuestions.add(qId);
+      }
+      updatePaletteStatus(currentIdx);
+      renderQuestion(currentIdx);
+    }
+
+    function nextQuestion() {
+      if (currentFilter !== 'all') {
+        let nextIdx = currentIdx + 1;
+        while (nextIdx < EXAM_QUESTIONS.length) {
+          if (isQuestionMatchingFilter(EXAM_QUESTIONS[nextIdx], currentFilter)) {
+            renderQuestion(nextIdx);
+            return;
+          }
+          nextIdx++;
+        }
+      } else if (currentIdx < EXAM_QUESTIONS.length - 1) {
+        renderQuestion(currentIdx + 1);
+      }
+    }
+
+    function prevQuestion() {
+      if (currentFilter !== 'all') {
+        let prevIdx = currentIdx - 1;
+        while (prevIdx >= 0) {
+          if (isQuestionMatchingFilter(EXAM_QUESTIONS[prevIdx], currentFilter)) {
+            renderQuestion(prevIdx);
+            return;
+          }
+          prevIdx--;
+        }
+      } else if (currentIdx > 0) {
+        renderQuestion(currentIdx - 1);
+      }
+    }
+
+    function submitExam(force = false) {
+      if (isGraded) {
+        const scoreCard = document.getElementById('scoreCard');
+        if (scoreCard) scoreCard.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      if (!force) {
+        const answered = Object.keys(userAnswers).filter(k => userAnswers[k]).length;
+        const confirmMsg = isTutorMode
+          ? `คุณฝึกไปแล้ว ${answered} จาก 100 ข้อ ยืนยันที่จะสรุปคะแนนและดูรายงานผลหรือไม่?`
+          : (answered < 100
+            ? `คุณเพิ่งทำไป ${answered} จาก 100 ข้อ ยืนยันที่จะส่งข้อสอบและตรวจคำตอบเลยหรือไม่?`
+            : `คุณทำครบทั้ง 100 ข้อแล้ว ยืนยันที่จะส่งข้อสอบและตรวจคำตอบเลยหรือไม่?`);
+        const proceed = confirm(confirmMsg);
+        if (!proceed) return;
+      }
+
+      // Stop timer completely
+      timerRunning = false;
+      if (typeof timerInterval !== 'undefined' && timerInterval) {
+        clearInterval(timerInterval);
+      }
+      const btnToggleTimer = document.getElementById('btnToggleTimer');
+      if (btnToggleTimer) {
+        btnToggleTimer.disabled = true;
+        btnToggleTimer.innerText = 'สอบเสร็จสิ้น';
+        btnToggleTimer.style.opacity = '0.6';
+        btnToggleTimer.style.cursor = 'not-allowed';
+      }
+
+      isGraded = true;
+      if (document.body) document.body.classList.add('is-graded');
+
+      // Calculate scores
+      let total = 0;
+      let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+
+      EXAM_QUESTIONS.forEach((q, idx) => {
+        const uc = String(userAnswers[q.id] || '').trim().toLowerCase();
+        const ac = String(q.answer || '').trim().toLowerCase();
+        const isCorrect = uc.length > 0 && uc === ac;
+        if (isCorrect) {
+          total++;
+          if (q.part === 1) p1++;
+          else if (q.part === 2) p2++;
+          else if (q.part === 3) p3++;
+          else if (q.part === 4) p4++;
+        }
+      });
+
+      // Update palette status for all questions
+      EXAM_QUESTIONS.forEach((q, idx) => {
+        updatePaletteStatus(idx);
+      });
+
+      // Grade calculation
+      let grade = 'F';
+      let feedbackMsg = '';
+      if (total >= 85) {
+        grade = 'Grade A (ยอดเยี่ยม!)';
+        feedbackMsg = 'ยินดีด้วยครับ! คุณมีความพร้อมในระดับสูงมาก ทั้งคำศัพท์ ไวยากรณ์ และการอ่านจับใจความ';
+      } else if (total >= 75) {
+        grade = 'Grade B+ (ดีมาก)';
+        feedbackMsg = 'ทำได้ดีมากครับ! ตรวจสอบข้อที่ตอบผิดด้านล่างเพื่อเก็บจุดรั่วไหลก่อนสอบจริง';
+      } else if (total >= 70) {
+        grade = 'Grade B (ดี)';
+        feedbackMsg = 'คะแนนอยู่ในเกณฑ์ดีครับ แนะนำให้ทบทวนข้อที่ตอบผิดและเทคนิคการตัดช้อยส์เพิ่มเติม';
+      } else if (total >= 60) {
+        grade = 'Grade C (ผ่าน)';
+        feedbackMsg = 'ผ่านเกณฑ์แล้วครับ แต่ยังสามารถทบทวนจุดสำคัญเพื่อทำคะแนนให้ดียิ่งขึ้นได้';
+      } else {
+        grade = 'ต้องทบทวนเพิ่ม';
+        feedbackMsg = 'แนะนำให้อ่านบทเรียนสรุป Unit 3–4 และทบทวนข้อสอบอย่างละเอียดอีกครั้งครับ';
+      }
+
+      const wrongCount = 100 - total;
+      document.getElementById('scoreDisplay').innerText = `${total} / 100`;
+      document.getElementById('gradeDisplay').innerText = grade;
+      const feedbackEl = document.getElementById('feedbackSummary');
+      if (feedbackEl) {
+        feedbackEl.innerHTML = `
+          <span style="font-weight: 600;">ตอบถูก ${total} ข้อ • ตอบผิด/ข้าม ${wrongCount} ข้อ</span><br>
+          <span style="font-size: 0.95rem; margin-top: 0.25rem; display: inline-block;">${feedbackMsg}</span>
+        `;
+      }
+
+      document.getElementById('scorePart1').innerText = `${p1} / 20`;
+      document.getElementById('scorePart2').innerText = `${p2} / 20`;
+      document.getElementById('scorePart3').innerText = `${p3} / 20`;
+      document.getElementById('scorePart4').innerText = `${p4} / 40`;
+
+      const btnW = document.getElementById('filterBtnWrong');
+      const btnC = document.getElementById('filterBtnCorrect');
+      if (btnW) btnW.innerText = `❌ ดูเฉพาะข้อที่ตอบผิด / ข้าม (${wrongCount} ข้อ)`;
+      if (btnC) btnC.innerText = `✅ ดูเฉพาะข้อที่ตอบถูก (${total} ข้อ)`;
+
+      // Update submit button text to reflect graded state
+      const submitBtn = document.querySelector('.btn-submit-exam');
+      if (submitBtn) {
+        submitBtn.innerText = `✅ ตรวจคะแนนแล้ว (${total}/100)`;
+        submitBtn.style.background = '#A9E5C5';
+      }
+
+      document.getElementById('scoreCard').style.display = 'block';
+      if (typeof window !== 'undefined' && window.Eng1Sound) {
+        window.Eng1Sound.playFanfare();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Initialize filter to 'all'
+      setQuestionFilter('all');
+      renderQuestion(currentIdx);
+    }
+
+    let autoInitialized = false;
+    function autoInitOnce() {
+      if (autoInitialized) return;
+      autoInitialized = true;
+      init();
+      // Support ?mode=tutor URL query parameter or /tutor clean URL path
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'tutor' || window.location.pathname.includes('/tutor')) {
+          setSimulatorMode('tutor', true);
+        }
+      } catch (e) {}
+    }
+    window.onload = init;
+    if (typeof document.addEventListener === 'function') {
+      document.addEventListener('DOMContentLoaded', autoInitOnce);
+      window.onload = autoInitOnce;
+    }
+
+  </script>
+  <script src="assets/vendor/lenis.min.js" defer></script>
+  <script src="assets/vendor/gsap.min.js" defer></script>
+  <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="assets/motion-sound.js" defer></script>
+</body>
+</html>

@@ -8,7 +8,7 @@
 ---
 
 ## 👤 ข้อมูลส่วนตัว (Personal Information)
-- **ชื่อ - สกุล**: NonHine (Creative Developer) (NonHine)
+- **ชื่อ - สกุล**: นาย รามณรงค์ชัย จันต๊ะภา (Ramnarongchai Jantapha)
 - **ชื่อเล่น**: ฮาย (Hine)
 - **อายุ**: 19 ปี
 - **สถานะการศึกษา**: นักศึกษาชั้นปีที่ 1 (เข้าศึกษาผ่านรอบ Portfolio ปีการศึกษา 2569)
@@ -18,10 +18,10 @@
 ---
 
 ## 📞 ช่องทางการติดต่อ (Contact Information)
-- **โทรศัพท์**: `08X-XXX-XXXX (Available upon request)`
-- **Line ID**: `available_upon_request`
-- **Facebook**: `Available upon request`
-- **Email**: `developer.portfolio@example.com`
+- **โทรศัพท์**: `098-496-7675`
+- **Line ID**: `nonklob`
+- **Facebook**: `Hine Ramnarong`
+- **Email**: `ramarongchai.c@kkumail.com`
 - **GitHub**: [`github.com/nonHine`](https://github.com/nonHine)
 - **ที่อยู่**: ขอนแก่น, ประเทศไทย (Khon Kaen, Thailand)
 
