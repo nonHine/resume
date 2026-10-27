@@ -501,6 +501,57 @@
       overflow: hidden;
     }
 
+    .card-screenshot-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .project-card-link:hover .card-screenshot-img {
+      transform: scale(1.04);
+    }
+
+    .launch-hover-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 9, 12, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 5;
+    }
+
+    .project-card-link:hover .launch-hover-overlay {
+      opacity: 1;
+    }
+
+    .launch-btn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent-red);
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.45rem 1.05rem;
+      border-radius: 999px;
+      box-shadow: 0 8px 22px rgba(255, 51, 51, 0.45);
+      transform: translateY(6px);
+      transition: transform 0.3s ease;
+    }
+
+    .project-card-link:hover .launch-btn-pill {
+      transform: translateY(0);
+    }
+
     /* Card Bottom Meta */
     .card-bottom-info {
       display: flex;
@@ -655,7 +706,7 @@
 
     <!-- LAYER 2: Portrait Cut-Out Standing in Center -->
     <div class="hero-portrait-stage">
-      <img src="assets/portrait-cutout.png" alt="NonHine - NonHine" class="portrait-image" />
+      <img src="assets/portrait-cutout.png" alt="NonHine - Creative Developer" class="portrait-image" />
     </div>
 
     <!-- LAYER 3: Viewport UI & 3-Column Content Overlay -->
@@ -802,46 +853,23 @@
         </a>
 
         <!-- CARD 02: ROADMAP.STUDIO -->
-        <a href="https://github.com/nonHine" target="_blank" rel="noopener noreferrer" class="project-card-link">
+        <a href="apps/roadmap-studio/mock-exam-simulator.html" target="_blank" rel="noopener noreferrer" class="project-card-link" title="เปิดใช้งานเว็บจำลองสอบเสมือนจริง 100 ข้อ (Interactive Exam Simulator)">
           <div class="card-preview-window">
             <div class="window-header-bar">
               <span class="window-dot red"></span>
               <span class="window-dot yellow"></span>
               <span class="window-dot green"></span>
-              <div class="window-url-bar">roadmap.studio/cefr-b2</div>
+              <div class="window-url-bar">roadmap.studio/exam-simulator</div>
             </div>
-            <div class="window-stage-content">
-              <!-- Stylized EdTech Exam UI -->
-              <div style="width: 92%; max-width: 500px; background: rgba(18, 18, 22, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.25rem; backdrop-filter: blur(12px); box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.6rem; margin-bottom: 0.75rem;">
-                  <span style="font-family: var(--font-mono); font-size: 0.65rem; color: #ff3333; font-weight: 700;">CEFR B2 ENGLISH EXAM ENGINE</span>
-                  <span style="font-family: var(--font-mono); font-size: 0.65rem; color: #27c93f; background: rgba(39, 201, 63, 0.12); padding: 0.15rem 0.5rem; border-radius: 4px;">⚡ 100% OFFLINE-READY</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                  <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 51, 51, 0.15); border: 1px solid rgba(255, 51, 51, 0.3); display: flex; align-items: center; justify-content: center; color: #ff3333;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                  </div>
-                  <div style="flex: 1;">
-                    <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; color: #ffffff;">Question 42 of 100 · Listening Audio Synthesis</div>
-                    <div style="display: flex; gap: 3px; align-items: center; height: 12px; margin-top: 4px;">
-                      <span style="width: 3px; height: 6px; background: #ff3333; border-radius: 2px;"></span>
-                      <span style="width: 3px; height: 12px; background: #ff3333; border-radius: 2px;"></span>
-                      <span style="width: 3px; height: 9px; background: #ff3333; border-radius: 2px;"></span>
-                      <span style="width: 3px; height: 14px; background: #ff3333; border-radius: 2px;"></span>
-                      <span style="width: 3px; height: 8px; background: #ff3333; border-radius: 2px;"></span>
-                      <span style="width: 3px; height: 11px; background: #ff3333; border-radius: 2px;"></span>
-                      <span style="width: 3px; height: 5px; background: #ff3333; border-radius: 2px;"></span>
-                    </div>
-                  </div>
-                  <div style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 800; color: #ffffff;">88/100</div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                  <div style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.4rem 0.6rem; border-radius: 6px;">A. Systematic</div>
-                  <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #27c93f; background: rgba(39, 201, 63, 0.1); border: 1px solid rgba(39, 201, 63, 0.3); padding: 0.4rem 0.6rem; border-radius: 6px; font-weight: 600;">B. Synthesize (✓)</div>
-                </div>
+            <div class="window-stage-content" style="padding: 0; background: #161512; overflow: hidden; position: relative;">
+              <img src="assets/roadmap-simulator-preview.png" alt="ENG1.PREP // FINAL EXAM SIMULATOR - ROADMAP.STUDIO" class="card-screenshot-img" />
+              <div class="launch-hover-overlay">
+                <span class="launch-btn-pill">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                  LAUNCH WEB APP
+                </span>
               </div>
             </div>
           </div>
