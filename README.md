@@ -1,4 +1,4 @@
-# 🚀 NonHine (Hine) — Interactive 3D Portfolio & Resume
+# 🚀 NonHine — Interactive 3D Portfolio & Resume
 
 > **NonHine (Creative Developer & IT Data Specialist)**  
 > นักศึกษาชั้นปีที่ 1 สาขาวิชาสารสนเทศศาสตร์ คณะมนุษยศาสตร์และสังคมศาสตร์ มหาวิทยาลัยขอนแก่น (ปีการศึกษา 2569)  
@@ -73,10 +73,10 @@
 ## 📞 ช่องทางการติดต่อ (Contact)
 
 - 📱 **โทรศัพท์:** `08X-XXX-XXXX (Available upon request)`
-- 💬 **Line ID:** `(Available upon request)`
-- 👤 **Facebook:** `(Available upon request)`
+- 💬 **Line ID:** `available_upon_request`
+- 👤 **Facebook:** `Available upon request`
 - ✉️ **Email:** `developer.portfolio@example.com`
 - 💻 **GitHub:** [`github.com/nonHine`](https://github.com/nonHine)
 
 ---
-© 2569 NonHine Portfolio. All rights reserved.
+© 2569 NonHine. All rights reserved.

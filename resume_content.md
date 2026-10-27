@@ -1,6 +1,6 @@
 # 📄 ต้นฉบับเนื้อหาเรซูเม่ฉบับสมบูรณ์ (Master Resume Copy)
 ## โครงการ MobiLib Gen 6 — ตำแหน่ง IT & Data Management
-**NonHine (Creative Developer & IT Data Specialist) | สารสนเทศศาสตร์ มหาวิทยาลัยขอนแก่น**
+**NonHine (Creative Developer & IT Data Specialist) | สาขาวิชาสารสนเทศศาสตร์ คณะมนุษยศาสตร์และสังคมศาสตร์ มหาวิทยาลัยขอนแก่น**
 
 > 💡 **เอกสารอ้างอิงข้อมูลกลาง (Master Data):**
 > ข้อมูลชุดนี้ได้รับการปรับปรุงล่าสุดให้สอดคล้องกันทุกส่วน ทั้งในเอกสารเรซูเม่สิ่งพิมพ์ **`index.html` (A4 Printable)**, เว็บไซต์พอร์ตโฟลิโอ **`creative-hero-3d.html` (3D Interactive Portfolio)** และไฟล์นำเสนอต่าง ๆ
@@ -8,7 +8,7 @@
 ---
 
 ## 👤 ข้อมูลส่วนตัว (Personal Information)
-- **นามเรียก / ฉายา**: NonHine (Creative Developer & IT)
+- **ชื่อ - สกุล**: NonHine (Creative Developer) (NonHine)
 - **ชื่อเล่น**: ฮาย (Hine)
 - **อายุ**: 19 ปี
 - **สถานะการศึกษา**: นักศึกษาชั้นปีที่ 1 (เข้าศึกษาผ่านรอบ Portfolio ปีการศึกษา 2569)
@@ -18,9 +18,9 @@
 ---
 
 ## 📞 ช่องทางการติดต่อ (Contact Information)
-- **โทรศัพท์**: `08X-XXX-XXXX (ติดต่อผ่านอีเมล)`
-- **Line ID**: `(ติดต่อผ่านอีเมล)`
-- **Facebook**: `(ติดต่อผ่านอีเมล)`
+- **โทรศัพท์**: `08X-XXX-XXXX (Available upon request)`
+- **Line ID**: `available_upon_request`
+- **Facebook**: `Available upon request`
 - **Email**: `developer.portfolio@example.com`
 - **GitHub**: [`github.com/nonHine`](https://github.com/nonHine)
 - **ที่อยู่**: ขอนแก่น, ประเทศไทย (Khon Kaen, Thailand)
