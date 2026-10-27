@@ -815,6 +815,36 @@
       gap: 0.45rem;
       list-style: none;
       margin-top: auto;
+      max-width: calc(100% - 95px);
+    }
+
+    .card-partner-badge {
+      position: absolute;
+      right: 1.5rem;
+      bottom: 1.4rem;
+      z-index: 5;
+      background: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 10px;
+      padding: 0.35rem 0.55rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      pointer-events: auto;
+    }
+
+    .card-partner-badge:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 102, 0, 0.35);
+    }
+
+    .card-partner-img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .card-tag-badge {
@@ -1049,6 +1079,18 @@
       }
       .content-wrapper {
         padding: 1.05rem 1.15rem 1.25rem;
+      }
+      .card-partner-badge {
+        right: 1.15rem;
+        bottom: 1.15rem;
+        padding: 0.25rem 0.45rem;
+        border-radius: 8px;
+      }
+      .card-partner-img {
+        height: 32px;
+      }
+      .card-tags-list {
+        max-width: calc(100% - 75px);
       }
       .card-number {
         font-size: 1.45rem;
@@ -1901,6 +1943,10 @@
                 <li class="card-tag-badge">AI Slip OCR</li>
                 <li class="card-tag-badge">PromptPay QR</li>
               </ul>
+              <!-- KKBS Official Partner Badge -->
+              <div class="card-partner-badge" title="ร่วมกับ คณะบริหารธุรกิจและการบัญชี มหาวิทยาลัยขอนแก่น (KKBS)">
+                <img src="assets/kkbs-logo.png" alt="คณะบริหารธุรกิจและการบัญชี มหาวิทยาลัยขอนแก่น (Khon Kaen Business School)" class="card-partner-img" />
+              </div>
             </div>
             <div class="grow-background"></div>
           </div>
