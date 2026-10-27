@@ -262,15 +262,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       top: 124.5mm;
       left: 7mm;
       width: 73.5mm;
-      bottom: 5.5mm;
+      bottom: auto;
       background-color: var(--surface-memo);
       border: 1.3px solid var(--border-crisp);
       border-radius: 10px;
-      padding: 17px 15px 14px 15px;
+      padding: 17px 15px 16px 15px;
       z-index: 20;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 14px;
+      box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.18), 0 3px 8px rgba(0, 0, 0, 0.08);
     }
 
     /* 3D Metallic Chrome Pushpin SVG Wrapper */
@@ -326,7 +328,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       color: var(--ink-secondary);
       font-size: 8.4pt;
       white-space: nowrap;
-      min-width: 64px;
+      min-width: auto;
+      margin-right: 2px;
     }
 
     .personal-val {
